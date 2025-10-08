@@ -45,7 +45,7 @@ Auth0 provides a [Terraform Provider](https://github.com/auth0/terraform-provide
 
 Credentials should be added through the creation of a tfvars file (auth0.credentials.auto.tfvars).  _(This filename has been added to .gitignore, to ensure credentials are never commited to the git repository.)_
 
-Example auth0.credentials.auto.tfvars:
+Example _auth0.credentials.auto.tfvars_:
 
 ```
 # =============================================================================
@@ -58,6 +58,31 @@ auth0_client_secret = "<your-application-specific-client_secret>"
 
 # =============================================================================
 ```
+
+Users should be aded through the creation of a tfvars file (auth0.users.auto.tfvras).
+
+Example _auth0.users.autho.tfvars_:
+
+```
+# =============================================================================
+# terraform_integration_templates :: environment/dev/auth0/auth0.users.auto.tfvars
+#       :: mdunbar :: 2025 Oct 07 :: MIT License © 2025 Matthew Dunbar ::
+# =============================================================================
+auth0_users = [
+    {
+      username       = "<username>"
+      given_name     = "<given_name>"
+      family_name    = "<family_name>"
+      email          = "email@your_domain.com"
+      group_ids      = ["admin"]
+      verify_email   = true
+    },
+  ]
+
+# =============================================================================
+```
+
+When ommitting the manual eddition of a password, Auth0 will automatically send an email with a link for the user to set a password.  A password must bw set by the user via that link before authentication for the user will work.
 
 #### Applications
 
