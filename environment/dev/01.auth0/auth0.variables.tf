@@ -21,11 +21,19 @@ variable "auth0_client_secret" {
   sensitive   = true
 }
 
-variable "auth0_group_to_aws_role_map" {
+variable "auth0_role_to_aws_role_map" {
   description = "Mapping of Auth0 groups to AWS IAM role + SAML provider pairs"
   type            = list(object({
-    auth0_group   = string
+    auth0_role   = string
     aws_role_name = string
+  }))
+}
+
+variable "auth0_role_list" {
+  description = "List of roles to be created in Auth0"
+  type = list(object({
+    role_name        = string
+    role_description = optional(string)
   }))
 }
 

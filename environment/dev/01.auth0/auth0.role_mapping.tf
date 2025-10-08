@@ -5,7 +5,7 @@
 module "auth0_saml_action" {
   source      = "../../../modules/auth0/saml_action"
   environment = local.environment
-  auth0_group_to_aws_role_arn_map = local.auth0_group_to_aws_role_arn_map
+  auth0_role_to_aws_role_arn_map = local.auth0_role_to_aws_role_arn_map
 }
 
 # =============================================================================

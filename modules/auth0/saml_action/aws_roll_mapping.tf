@@ -15,7 +15,7 @@ resource "auth0_action" "aws_role_mapping" {
   code = templatefile("${path.module}/templates/aws_role_mapping.js.tpl", {
     environment       = var.environment
     timestamp         = timestamp()
-    auth0_group_to_aws_role_arn_map = var.auth0_group_to_aws_role_arn_map
+    auth0_role_to_aws_role_arn_map = var.auth0_role_to_aws_role_arn_map
   })
 }
 

@@ -89,6 +89,18 @@ When ommitting the manual eddition of a password, Auth0 will automatically send 
 - **auth0.application.tf.m2m.tf** - Terraform Machine-to-Machine Application - providing access for Terraform-based management
 - **auth0.application.aws.saml.tf** - AWS SAML Application - SAML Identity Provider (IdP) Source of Authority for user Identity Management
 
+#### Roles
+
+For defining Auth0 roles, role_names (and optional role_descriptions) are provided in **auth0.roles.auto.tfvars**
+
+In this examples those include:
+
+- \<environment\>-Administrator
+- \<environment\>-Developer
+- \<environment\>-ReadOnly
+
+The environment prefix allows for environment-level granularity, as developers often have elevated priviledges in non-production environments.
+
 #### Users
 
 Auth0 provides centralized user management, allowing implementation and management for all Auth0 supported forms of authentication (including Enterprise SSO).

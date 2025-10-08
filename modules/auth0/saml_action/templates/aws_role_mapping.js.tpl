@@ -7,11 +7,11 @@ Purpose:
 
 Terraform variables:
   - environment
-  - auth0_group_to_aws_role_arn_map (map<string, string>)
+  - auth0_role_to_aws_role_arn_map (map<string, string>)
 ============================================================================ */
 exports.onExecutePostLogin = async (event, api) => {
   const groupToRole = {
-%{ for group, role_arn in auth0_group_to_aws_role_arn_map ~}
+%{ for group, role_arn in auth0_role_to_aws_role_arn_map ~}
     "${group}": "${role_arn}",
 %{ endfor ~}
   };
