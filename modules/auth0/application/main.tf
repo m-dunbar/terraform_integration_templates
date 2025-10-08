@@ -1,6 +1,7 @@
 # ===============================================================================
-# terraform_integration_templates :: modules/auth0/application/variables.tf :: mdunbar :: 2025 oct 05
-# ===============================================================================
+# terraform_integration_templates :: modules/auth0/application/variables.tf 
+#      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
+# =============================================================================
 resource "auth0_client" "aws_saml_app" {
   name             = var.name
   app_type         = "regular_web"
@@ -19,3 +20,5 @@ resource "auth0_action" "aws_role_mapping" {
 
   code = file("${path.module}/aws_role_mapping.js")
 }
+
+# =============================================================================
