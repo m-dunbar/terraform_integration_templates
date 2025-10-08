@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+  labels:
+    app: localstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localstack
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+      - name: localstack
+        image: localstack/localstack:latest
+        ports:
+          - containerPort: 4566  # main edge port
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "10"]
+        readinessProbe:
+          httpGet:
+            path: /_localstack/health
+            port: 4566
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /_localstack/health
+            port: 4566
+          initialDelaySeconds: 60
+          periodSeconds: 20
+        env:
+        - name: SERVICES
+          value: alb,autoscaling,cloudformation,cloudwatch,dynamodb,ec2,elasticloadbalancingv2,eks,iam,ipam,kms,logs,route53,s3,sts
+        - name: DEBUG
+          value: "1"
+        - name: PERSISTENCE
+          value: "1"
+        volumeMounts:
+        - name: localstack-data
+          mountPath: /var/lib/localstack
+        resources: # let's use some of this M4 Pro's 48Gb
+          requests:
+            memory: "4Gi"
+            cpu: "2"
+          limits:
+            memory: "12Gi"
+            cpu: "4"
+      terminationGracePeriodSeconds: 60 # give LocalStack some time to gracefully shut down
+      volumes:
+      - name: localstack-data
+        hostPath:
+          path: /Volumes/Transcend/localstack/data
+          type: DirectoryOrCreate

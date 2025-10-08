@@ -1,0 +1,11 @@
+# Ignore Mac system files
+.DS_Store
+
+# Ignore various Terraform state files and sensitive variable files
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Omit sensitive variable files
+*.credentials.auto.tfvars
+*.users.auto.tfvars

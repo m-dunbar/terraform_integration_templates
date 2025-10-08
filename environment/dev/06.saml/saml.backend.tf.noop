@@ -1,0 +1,13 @@
+# =============================================================================
+# terraform-integration-template :: s3.backend.tf :: mdunbar :: 2025 oct 05
+# =============================================================================
+terraform {
+  backend "s3" {
+    bucket         = "tf-integration-template-terraform-state-us-east-1"
+    dynamodb_table = "terraform_locks"
+    key            = "saml/terraform.tfstate"
+    region         = "us-east-1"
+  }
+}
+
+# ======================================================================
