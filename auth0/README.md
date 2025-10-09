@@ -49,7 +49,7 @@ Example _auth0.credentials.auto.tfvars_:
 
 ```
 # =============================================================================
-# terraform_integration_templates :: environment/dev/auth0/auth0.credentials.auto.tfvars 
+# terraform_integration_templates :: auth0/auth0.credentials.auto.tfvars 
 #      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 auth0_domain        = "<your-auth0-domain>.us.auth0.com"
@@ -65,7 +65,7 @@ Example _auth0.users.autho.tfvars_:
 
 ```
 # =============================================================================
-# terraform_integration_templates :: environment/dev/auth0/auth0.users.auto.tfvars
+# terraform_integration_templates :: auth0/auth0.users.auto.tfvars
 #       :: mdunbar :: 2025 Oct 07 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 auth0_users = [

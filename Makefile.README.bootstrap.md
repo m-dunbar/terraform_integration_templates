@@ -24,8 +24,9 @@ The solution is to write terraform to create these prerequisites, apply the init
 
 In order to do so in the correct order, writing supporting scripting is also the obvious choice.  And, nearly all workstations have `make`, making a Makefile an excellent means to provide a framework without also having to write additional supporting logic to be able to selectively or completely create these prereqs and to implement the centralized backend, maintaining the tfstate of those supporting resources.
 
-
 ## Performing the initial bootstrap
+
+
 
 <hr>
 

@@ -6,7 +6,7 @@ resource "auth0_role" "roles" {
   for_each = { for r in local.role_descs : r.role_name => r }
 
   name        = each.value.role_name
-  description = each.value.role_description
+  description = "${each.value.role_description} - Managed by Terraform"
 }
 
 # =============================================================================

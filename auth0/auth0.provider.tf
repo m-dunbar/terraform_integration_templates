@@ -1,5 +1,5 @@
 # =============================================================================
-# terraform_integration_templates :: environment/dev/auth0/auth0.provider.tf 
+# terraform_integration_templates :: auth0/auth0.provider.tf 
 #      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 terraform {
