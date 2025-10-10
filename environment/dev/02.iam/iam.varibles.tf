@@ -9,16 +9,12 @@ variable "environment" {
 }
 
 variable "iam_role_list" {
-  description = "Map of IAM roles to create"
-  type = map(object({
-    managed_policy_arns = list(string)
-    tags                = optional(map(string), {})
+  description = "List of IAM roles to create"
+  type = list(object({
+    role_name = string
+    policies  = map(string)
+    tags      = optional(map(string), {})
   }))
-  default = {
-    terraform-provisioner = {
-      managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
-    }
-  }
 }
 
 # =============================================================================

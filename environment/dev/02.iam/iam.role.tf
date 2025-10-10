@@ -5,16 +5,16 @@
 module "iam_role_saml" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  for_each = local.iam_role_list
+  for_each = { for role in var.iam_role_list : role.role_name => role }
 
   name              = each.key
   enable_saml       = true
-  saml_provider_ids = each.value.saml_provider_ids
+  saml_provider_ids = local.saml_provider_id
   policies          = each.value.policies
 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    Environment = var.environment
+    Managed_by  = "Terraform"
   }
 }
 

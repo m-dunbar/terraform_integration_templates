@@ -4,6 +4,7 @@
 # =============================================================================
 locals {
   account_id = data.aws_caller_identity.current.account_id
+  saml_provider_id = [ "arn:aws:iam::${local.account_id}:saml-provider/auth0_saml_provider" ]
 
   assume_role_statement = [
     {
@@ -16,18 +17,6 @@ locals {
       ]
     }
   ]
-
-  # Ensure all roles have default policy and merged tags
-  roles_with_defaults = {
-    for name, cfg in var.roles :
-    name => {
-      managed_policy_arns = length(cfg.managed_policy_arns) > 0 ? cfg.managed_policy_arns : ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
-      tags = merge(
-        { Environment = var.environment, Project = "my-terraform-project" },
-        cfg.tags
-      )
-    }
-  }
 }
 
 # =============================================================================

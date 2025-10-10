@@ -5,21 +5,21 @@
 iam_role_list = [
   {
     role_name = "Administrators"
-    managed_policy_arns = [
-      "arn:aws:iam::aws:policy/AdministratorAccess"
-    ]
+    policies = {
+     "AdministratorAccess" = "arn:aws:iam::aws:policy/AdministratorAccess",
+    }
   },
   {
     role_name = "Developers"
-    managed_policy_arns = [
-      "arn:aws:iam::aws:policy/PowerUserAccess"
-    ]
+    policies = {
+      "PowerUserAccess" = "arn:aws:iam::aws:policy/PowerUserAccess",
+    }
   },
   {
     role_name = "ReadOnly"
-    managed_policy_arns = [
-      "arn:aws:iam::aws:policy/ReadOnlyAccess"
-    ]
+    policies = {
+      "ReadOnlyAccess" = "arn:aws:iam::aws:policy/ReadOnlyAccess",
+    }
   },
 ]
 
