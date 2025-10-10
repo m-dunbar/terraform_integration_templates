@@ -4,6 +4,9 @@
 # VSCode settings
 .vscode/
 
+# ignore scratch working directory for code in progress
+scratch/
+
 # Ignore various Terraform state files and sensitive variable files
 *.tfstate
 *.tfstate.backup
