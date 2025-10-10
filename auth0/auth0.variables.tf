@@ -57,10 +57,10 @@ variable "auth0_users" {
   default = []
 }
 
-variable "auth0_user_group_memberships" {
-  description = "Mapping of Auth0 user emails to lists of Auth0 group names for group memberships"
-  type        = map(list(string))
-  default     = {}
-}
+# variable "auth0_user_role_memberships" {
+#   description = "Mapping of Auth0 user emails to lists of Auth0 group names for group memberships"
+#   type        = map(list(string))
+#   default     = {}
+# }
 
 # =============================================================================
