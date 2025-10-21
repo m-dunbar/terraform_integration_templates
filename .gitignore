@@ -10,6 +10,9 @@ scratch/
 # Ignore various Terraform state files and sensitive variable files
 *.tfstate
 *.tfstate.backup
+*.tfstate.*.backup
+.terraform.tfstate
+.terraform.tfstate.backup
 .terraform/
 
 # Omit sensitive variable files
