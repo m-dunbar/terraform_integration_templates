@@ -1,5 +1,5 @@
 # =============================================================================
-# terraform_integration_templates :: modules/auth0/role/auth0.role.tf
+# terraform_integration_templates :: modules/auth0/role/main.tf
 #       :: mdunbar :: 2025 Oct 08 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 resource "auth0_role" "roles" {

@@ -1,5 +1,5 @@
 # =============================================================================
-# terraform_integration_templates :: modules/auth0/user/auth0_user.tf
+# terraform_integration_templates :: modules/auth0/user/main.tf
 #       :: mdunbar :: 2025 Oct 07 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 resource "random_password" "this" {
@@ -24,6 +24,26 @@ resource "auth0_user" "this" {
   phone_number    = lookup(each.value, "phone_number", null)
   phone_verified  = lookup(each.value, "phone_verified", false)
   blocked         = lookup(each.value, "blocked", false)
+}
+
+resource "auth0_user_role" "user_role_assignments" {
+  for_each = local.user_role_map
+
+  user_id = try(
+    lookup(auth0_user.this, each.value.username, null),
+    null
+  ).id
+
+  role_id = try(
+    lookup(local.role_map, each.value.role_name, null),
+    null
+  ).id
+
+  lifecycle {
+    ignore_changes = [
+      role_id
+    ]
+  }
 }
 
 # =============================================================================

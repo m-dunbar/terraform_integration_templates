@@ -14,13 +14,13 @@ Similarly, separation of resources into smaller files, using a clear, easy to co
 
 ### Directory Structure
 
-The directory structure follows a logical organization common for terraform and related components.  Individual components are separated by tool first, then by logical organization for each tool, as appropriate. 
+The directory structure follows a logical organization common for terraform and related components.  Individual components are separated by tool first, then by logical organization for each tool, as appropriate.
 
 #### Top-level
 
 The top level of the repo contains .gitignore, LICENSE file, a Makefile, README files, and directories for the particular tools implemented for the template stack:
 
-```
+```txt
 terraform_integration_templates  
 ├─ .gitignore  
 ├─ LICENSE  
@@ -38,7 +38,7 @@ Sub-folder structures provide logical organization for the related files, as wel
 
 Example:
 
-```
+```txt
 terraform_integration_templates
 └── terraform
     ├── auth0
@@ -76,7 +76,7 @@ Segmented by resource in this manner, `terraform plan` and `terraform apply` are
 
 within the subdirectory structure, terraform filenames follow the structure:
 
-```
+```txt
 <resource_category_prefix>.<resource_subtype>.[specific_resource_division].<file_type_suffix_string>
 ```
 
@@ -90,7 +90,7 @@ within the subdirectory structure, terraform filenames follow the structure:
 
 Fully realized example:
 
-```
+```txt
 s3.bucket.tf-integration-template-terraform-state-us-east-1.tf
 ```
 
@@ -102,8 +102,7 @@ For purposes of initial deployment, before minimum base requirements for a best-
 
 Initial baseline deployment, including reconfiguration and migration of all backend configs is implemented via the included `Makefile`, as documented in the top-level README.Makefile.md.
 
-
-## 
+## Infrastructure as Code (IaC)
 
 WHEN COMPLETE, THIS SET OF TEMPLATES WILL PROVIDE:
 
@@ -135,7 +134,7 @@ This repo provides a terraform module-based, fully-integrated application stack 
 
 enabling use of the Auth0 IdP to provide single sign-on (SSO) authentication access
 
-#### - Identity and Acccess Management (IAM)
+#### - Identity and Access Management (IAM)
 
 implementing role-based access control (RBAC) and both AWS and customer-managed policy-based resource access
 
@@ -155,7 +154,7 @@ for transport layer security (TLS) certificate management
 
 supporting terraform locks files to prevent resource management collisions when applying terraform updates
 
-### Simple Storage Servce (S3)
+### Simple Storage Service (S3)
 
 Amazon's Object store, providing storage for terraform state files, and module-based management of S3 buckets for cloud-based storage.  This includes policy-based storage access and lifecycle management.
 
@@ -179,13 +178,13 @@ Amazon's implementation of Kubernetes (k8s) as a managed service
 
 providing load balancing services fronting the EKS deployment
 
-### Route53 
+### Route53
 
 providing Domain Name Service (DNS) to be able to reach the sample application
 
 ### Web Application Firewall (WAF)
 
-leveraging AWS-curated rules to provide DDOS and other protections for the ALB 
+leveraging AWS-curated rules to provide DDOS and other protections for the ALB
 
 ## WordPress [placeholder]
 
@@ -195,15 +194,15 @@ As of October 2025, WordPress powers approximately 60% of all websites using a C
 
 While somewhat limited in scope, Localstack is a local AWS emulator, allowing for more rigorous local testing of terraform prior to an actual rollout within an AWS account.
 
-<hr>
+---
 
 Sources:
 
-<a id="fn1"></a>1. Firefly.ai. *The State of Infrastructure as Code in 2025*. Firefly.ai, 2025, p. 5, [https://www.firefly.ai/asset-state-of-iac-report-2025](https://www.firefly.ai/asset-state-of-iac-report-2025). [↩︎](#ref1)
+<a id="fn1"></a>1. Firefly.ai. _The State of Infrastructure as Code in 2025_. Firefly.ai, 2025, p. 5, [https://www.firefly.ai/asset-state-of-iac-report-2025](https://www.firefly.ai/asset-state-of-iac-report-2025). [↩︎](#ref1)
 
-<a id="fn2"></a>2. Clorici, Pavel. “How Many Websites Use WordPress in October 2025? WordPress Statistics.” *WPZoom*, 17 Apr. 2025, [https://www.wpzoom.com/blog/wordpress-statistics/](https://www.wpzoom.com/blog/wordpress-statistics/). [↩︎](#ref2)
+<a id="fn2"></a>2. Clorici, Pavel. “How Many Websites Use WordPress in October 2025? WordPress Statistics.” _WPZoom_, 17 Apr. 2025, [https://www.wpzoom.com/blog/wordpress-statistics/](https://www.wpzoom.com/blog/wordpress-statistics/). [↩︎](#ref2)
 
-<hr>
+---
 
 © 2025 Matthew Dunbar  
 (See LICENSE for details.)
