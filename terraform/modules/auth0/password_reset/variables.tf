@@ -2,6 +2,15 @@
 # terraform_integration_templates :: modules/auth0/user/variables.tf
 #       :: mdunbar :: 2025 Oct 07 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
+variable "auth0_credentials" {
+  description = "Auth0 credentials object"
+  type = object({
+    domain        = string
+    client_id     = string
+    client_secret = string
+  })
+}
+
 variable "auth0_users" {
   description = "List of user objects to be created"
   type = list(object({
@@ -10,7 +19,6 @@ variable "auth0_users" {
     family_name    = string
     nickname       = optional(string)
     name           = optional(string)
-    password       = optional(string)
     email          = string
     email_verified = optional(bool)
     phone_number   = optional(string)

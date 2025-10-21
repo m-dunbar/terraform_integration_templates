@@ -1,10 +1,9 @@
 # =============================================================================
-# terraform_integration_templates :: auth0/auth0.users.tf
-#       :: mdunbar :: 2025 Oct 07 :: MIT License © 2025 Matthew Dunbar ::
+# terraform_integration_templates :: environment/dev/04.dynamodb/dynamodb.locals.tf
+#       :: mdunbar :: 2025 Oct 12 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
-module "auth0_user" {
-  source = "../modules/auth0/user"
-  auth0_users = var.auth0_users
+locals {
+  kms_key_arn = try(data.aws_kms_key.terraform.arn, "KMS key not found")
 }
 
 # =============================================================================

@@ -23,7 +23,10 @@ module "dynamodb_table" {
   point_in_time_recovery_enabled = false
 
   server_side_encryption_enabled     = true
-  server_side_encryption_kms_key_arn = data.aws_kms_alias.terraform.arn
+  server_side_encryption_kms_key_arn = ( var.bootstrap_plan
+    ? null
+    : local.terraform_kms_key_arn
+  )
 
   ttl_enabled        = false
 

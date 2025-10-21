@@ -44,10 +44,7 @@ variable "auth0_users" {
     given_name     = string
     nickname       = optional(string)
     family_name    = string
-    name           = optional(string)
-    password       = optional(string)
     email          = string
-    email_verified = optional(bool)
     phone_number   = optional(string)
     phone_verified = optional(bool)
     group_ids      = optional(list(string))

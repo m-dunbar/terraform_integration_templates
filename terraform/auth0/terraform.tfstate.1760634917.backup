@@ -1,0 +1,778 @@
+{
+  "version": 4,
+  "terraform_version": "1.13.4",
+  "serial": 88,
+  "lineage": "5e1bcb5c-2ec5-417f-bb48-bdd94f14ab0b",
+  "outputs": {
+    "account_id": {
+      "value": "017425894299",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "017425894299",
+            "arn": "arn:aws:iam::017425894299:root",
+            "id": "017425894299",
+            "user_id": "017425894299"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "auth0_action",
+      "name": "aws_role_mapping",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "code": "exports.onExecutePostLogin = async (event, api) =\u003e {\n  const roles = event.user?.app_metadata?.aws_roles || [];\n  if (!roles || !roles.length) return;\n\n  // Ensure we have an array of role strings\n  const vals = Array.isArray(roles) ? roles : [roles];\n\n  // Only call SAML API if available in this trigger/context\n  if (api.saml \u0026\u0026 typeof api.saml.addAttribute === \"function\") {\n    api.saml.addAttribute(\"https://aws.amazon.com/SAML/Attributes/Role\", vals);\n    api.saml.addAttribute(\"https://aws.amazon.com/SAML/Attributes/RoleSessionName\", event.user.user_id || \"\");\n  }\n};\n",
+            "dependencies": [],
+            "deploy": true,
+            "id": "bd03cdaf-fbd1-4e40-b0be-020199fd9bf8",
+            "name": "aws-role-mapping",
+            "runtime": "node18",
+            "secrets": [],
+            "supported_triggers": [
+              {
+                "id": "post-login",
+                "version": "v3"
+              }
+            ],
+            "version_id": "5ded776c-8d0b-4bfe-ba9e-d41d45641f0d"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "auth0_client",
+      "name": "aws_saml",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "addons": [
+              {
+                "aws": [],
+                "azure_blob": [],
+                "azure_sb": [],
+                "box": [],
+                "cloudbees": [],
+                "concur": [],
+                "dropbox": [],
+                "echosign": [],
+                "egnyte": [],
+                "firebase": [],
+                "layer": [],
+                "mscrm": [],
+                "newrelic": [],
+                "office365": [],
+                "rms": [],
+                "salesforce": [],
+                "salesforce_api": [],
+                "salesforce_sandbox_api": [],
+                "samlp": [
+                  {
+                    "audience": "https://signin.aws.amazon.com/saml",
+                    "authn_context_class_ref": "",
+                    "binding": "",
+                    "create_upn_claim": false,
+                    "destination": "",
+                    "digest_algorithm": "sha1",
+                    "flexible_mappings": "",
+                    "include_attribute_name_format": true,
+                    "issuer": "",
+                    "lifetime_in_seconds": 3600,
+                    "logout": [],
+                    "map_identities": false,
+                    "map_unknown_claims_as_is": false,
+                    "mappings": {},
+                    "name_identifier_format": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+                    "name_identifier_probes": [],
+                    "passthrough_claims_with_no_mapping": false,
+                    "recipient": "",
+                    "sign_response": false,
+                    "signature_algorithm": "rsa-sha1",
+                    "signing_cert": "",
+                    "typed_attributes": true
+                  }
+                ],
+                "sap_api": [],
+                "sentry": [],
+                "sharepoint": [],
+                "slack": [],
+                "springcm": [],
+                "sso_integration": [],
+                "wams": [],
+                "wsfed": [],
+                "zendesk": [],
+                "zoom": []
+              }
+            ],
+            "allowed_clients": [],
+            "allowed_logout_urls": [],
+            "allowed_origins": [],
+            "app_type": "regular_web",
+            "callbacks": [
+              "https://signin.aws.amazon.com/saml"
+            ],
+            "client_aliases": [],
+            "client_id": "CspTRrflht66lMAoPYzpMw03s2LO9S3F",
+            "client_metadata": {},
+            "compliance_level": "",
+            "cross_origin_auth": false,
+            "cross_origin_loc": "",
+            "custom_login_page": "",
+            "custom_login_page_on": true,
+            "default_organization": [
+              {
+                "disable": true,
+                "flows": [],
+                "organization_id": ""
+              }
+            ],
+            "description": "AWS SSO via SAML",
+            "encryption_key": null,
+            "form_template": "",
+            "grant_types": [
+              "authorization_code",
+              "implicit",
+              "refresh_token",
+              "client_credentials"
+            ],
+            "id": "CspTRrflht66lMAoPYzpMw03s2LO9S3F",
+            "initiate_login_uri": "",
+            "is_first_party": true,
+            "is_token_endpoint_ip_header_trusted": false,
+            "jwt_configuration": [
+              {
+                "alg": "",
+                "lifetime_in_seconds": 36000,
+                "scopes": {},
+                "secret_encoded": false
+              }
+            ],
+            "logo_uri": "",
+            "mobile": [],
+            "name": "AWS SAML App",
+            "native_social_login": [],
+            "oidc_backchannel_logout_urls": [],
+            "oidc_conformant": false,
+            "oidc_logout": [
+              {
+                "backchannel_logout_initiators": [
+                  {
+                    "mode": "custom",
+                    "selected_initiators": [
+                      "idp-logout",
+                      "rp-logout"
+                    ]
+                  }
+                ],
+                "backchannel_logout_urls": []
+              }
+            ],
+            "organization_require_behavior": "",
+            "organization_usage": "",
+            "refresh_token": [
+              {
+                "expiration_type": "non-expiring",
+                "idle_token_lifetime": 2592000,
+                "infinite_idle_token_lifetime": true,
+                "infinite_token_lifetime": true,
+                "leeway": 0,
+                "policies": [],
+                "rotation_type": "non-rotating",
+                "token_lifetime": 31557600
+              }
+            ],
+            "require_proof_of_possession": false,
+            "require_pushed_authorization_requests": false,
+            "resource_server_identifier": "",
+            "session_transfer": [],
+            "signing_keys": [
+              {
+                "cert": "-----BEGIN CERTIFICATE-----\r\nMIIDHTCCAgWgAwIBAgIJe3+9M+LA660GMA0GCSqGSIb3DQEBCwUAMCwxKjAoBgNV\r\nBAMTIWRldi1meHlsZWxsNXhmejhydnJxLnVzLmF1dGgwLmNvbTAeFw0yNTEwMDMx\r\nOTM4MTdaFw0zOTA2MTIxOTM4MTdaMCwxKjAoBgNVBAMTIWRldi1meHlsZWxsNXhm\r\nejhydnJxLnVzLmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC\r\nggEBAL4i7g2wR0p8W3+ml96p7iyWzLXd3XfqHSa1pRvdzDvBtiKCPfEp6OpYwaGf\r\nSDZYxlc2ZXubDv/v3NTRBpACwBrBSORq0efDpuxYGVK4njBPwOpq6BbeU0Jz2NfK\r\nDNzld6rK/2ebrGhrQpAbzqOekFqU0vGDR1+TaXUW3tEiF4644jSv+OXgvx0sWNJS\r\nIqtA8K576zb1/ifNOT4FwTTvCPhIRFfoKZICGtpXws5DWLieZSK4XAhZQH20jvWo\r\nhLvx8HCwgjH5I94uOmvnN4UGnhduX81HzRiocHv+ob/25+06YqRQF3jc0LcCej9d\r\nTc1Nw9qK55LC/RvKCEX24ko8cjcCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAd\r\nBgNVHQ4EFgQUgsGsjC7PzfMWrPtDZ2Utvi8cv/MwDgYDVR0PAQH/BAQDAgKEMA0G\r\nCSqGSIb3DQEBCwUAA4IBAQAUs1bMJwSa2ahz+PU+SA83nBSnWHA+CscKTaPWB676\r\nwVW+ZgiYBTzpw95bRcoTPTJgdYgJn8vDSMjF7bmZ3M+UI/x0ZPJkm8iU+cRikBIU\r\nkkOsIY6Up2r0qsOSKrsUcyv4X5TEAe4E9jUJhO2B6ipP/AZsg0hVgUy23VCeS8tf\r\nYJo1FrgqPZO2mgDtDMOvQmgeMaUTv0sPjMQ69CFL16ukiPoCHNHE/Fx8+eavf2zg\r\nPErOJQa1aguWNfbVTdpa4SMZpZXj8vDQHGyWvC78OAc2sg/QMwCDYvj0aX5ONHZR\r\n6YEtqeq6mduFcAYQ6lGtNw5BZq4zoq4gyi7exsqDbjSq\r\n-----END CERTIFICATE-----",
+                "pkcs7": "-----BEGIN PKCS7-----\r\nMIIDTAYJKoZIhvcNAQcCoIIDPTCCAzkCAQExADALBgkqhkiG9w0BBwGgggMhMIID\r\nHTCCAgWgAwIBAgIJe3+9M+LA660GMA0GCSqGSIb3DQEBCwUAMCwxKjAoBgNVBAMT\r\nIWRldi1meHlsZWxsNXhmejhydnJxLnVzLmF1dGgwLmNvbTAeFw0yNTEwMDMxOTM4\r\nMTdaFw0zOTA2MTIxOTM4MTdaMCwxKjAoBgNVBAMTIWRldi1meHlsZWxsNXhmejhy\r\ndnJxLnVzLmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB\r\nAL4i7g2wR0p8W3+ml96p7iyWzLXd3XfqHSa1pRvdzDvBtiKCPfEp6OpYwaGfSDZY\r\nxlc2ZXubDv/v3NTRBpACwBrBSORq0efDpuxYGVK4njBPwOpq6BbeU0Jz2NfKDNzl\r\nd6rK/2ebrGhrQpAbzqOekFqU0vGDR1+TaXUW3tEiF4644jSv+OXgvx0sWNJSIqtA\r\n8K576zb1/ifNOT4FwTTvCPhIRFfoKZICGtpXws5DWLieZSK4XAhZQH20jvWohLvx\r\n8HCwgjH5I94uOmvnN4UGnhduX81HzRiocHv+ob/25+06YqRQF3jc0LcCej9dTc1N\r\nw9qK55LC/RvKCEX24ko8cjcCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNV\r\nHQ4EFgQUgsGsjC7PzfMWrPtDZ2Utvi8cv/MwDgYDVR0PAQH/BAQDAgKEMA0GCSqG\r\nSIb3DQEBCwUAA4IBAQAUs1bMJwSa2ahz+PU+SA83nBSnWHA+CscKTaPWB676wVW+\r\nZgiYBTzpw95bRcoTPTJgdYgJn8vDSMjF7bmZ3M+UI/x0ZPJkm8iU+cRikBIUkkOs\r\nIY6Up2r0qsOSKrsUcyv4X5TEAe4E9jUJhO2B6ipP/AZsg0hVgUy23VCeS8tfYJo1\r\nFrgqPZO2mgDtDMOvQmgeMaUTv0sPjMQ69CFL16ukiPoCHNHE/Fx8+eavf2zgPErO\r\nJQa1aguWNfbVTdpa4SMZpZXj8vDQHGyWvC78OAc2sg/QMwCDYvj0aX5ONHZR6YEt\r\nqeq6mduFcAYQ6lGtNw5BZq4zoq4gyi7exsqDbjSqMQA=\r\n-----END PKCS7-----\r\n",
+                "subject": "deprecated"
+              }
+            ],
+            "skip_non_verifiable_callback_uri_confirmation_prompt": false,
+            "sso": false,
+            "sso_disabled": false,
+            "token_exchange": [],
+            "token_quota": [],
+            "web_origins": []
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "signing_keys"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "auth0_client",
+      "name": "terraform_access",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "addons": [],
+            "allowed_clients": [],
+            "allowed_logout_urls": [],
+            "allowed_origins": [],
+            "app_type": "non_interactive",
+            "callbacks": [],
+            "client_aliases": [],
+            "client_id": "bRA5VQNUr7G9LJ208mJlHjDrrmVGra1K",
+            "client_metadata": {},
+            "compliance_level": "",
+            "cross_origin_auth": false,
+            "cross_origin_loc": "",
+            "custom_login_page": "",
+            "custom_login_page_on": true,
+            "default_organization": [
+              {
+                "disable": true,
+                "flows": [],
+                "organization_id": ""
+              }
+            ],
+            "description": "Dedicated client for Terraform to manage Auth0 programmatically",
+            "encryption_key": null,
+            "form_template": "",
+            "grant_types": [
+              "client_credentials"
+            ],
+            "id": "bRA5VQNUr7G9LJ208mJlHjDrrmVGra1K",
+            "initiate_login_uri": "",
+            "is_first_party": true,
+            "is_token_endpoint_ip_header_trusted": false,
+            "jwt_configuration": [
+              {
+                "alg": "",
+                "lifetime_in_seconds": 36000,
+                "scopes": {},
+                "secret_encoded": false
+              }
+            ],
+            "logo_uri": "",
+            "mobile": [],
+            "name": "Terraform Access",
+            "native_social_login": [],
+            "oidc_backchannel_logout_urls": [],
+            "oidc_conformant": true,
+            "oidc_logout": [
+              {
+                "backchannel_logout_initiators": [
+                  {
+                    "mode": "custom",
+                    "selected_initiators": [
+                      "idp-logout",
+                      "rp-logout"
+                    ]
+                  }
+                ],
+                "backchannel_logout_urls": []
+              }
+            ],
+            "organization_require_behavior": "",
+            "organization_usage": "",
+            "refresh_token": [
+              {
+                "expiration_type": "non-expiring",
+                "idle_token_lifetime": 2592000,
+                "infinite_idle_token_lifetime": true,
+                "infinite_token_lifetime": true,
+                "leeway": 0,
+                "policies": [],
+                "rotation_type": "non-rotating",
+                "token_lifetime": 31557600
+              }
+            ],
+            "require_proof_of_possession": false,
+            "require_pushed_authorization_requests": false,
+            "resource_server_identifier": "",
+            "session_transfer": [],
+            "signing_keys": [
+              {
+                "cert": "-----BEGIN CERTIFICATE-----\r\nMIIDHTCCAgWgAwIBAgIJe3+9M+LA660GMA0GCSqGSIb3DQEBCwUAMCwxKjAoBgNV\r\nBAMTIWRldi1meHlsZWxsNXhmejhydnJxLnVzLmF1dGgwLmNvbTAeFw0yNTEwMDMx\r\nOTM4MTdaFw0zOTA2MTIxOTM4MTdaMCwxKjAoBgNVBAMTIWRldi1meHlsZWxsNXhm\r\nejhydnJxLnVzLmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC\r\nggEBAL4i7g2wR0p8W3+ml96p7iyWzLXd3XfqHSa1pRvdzDvBtiKCPfEp6OpYwaGf\r\nSDZYxlc2ZXubDv/v3NTRBpACwBrBSORq0efDpuxYGVK4njBPwOpq6BbeU0Jz2NfK\r\nDNzld6rK/2ebrGhrQpAbzqOekFqU0vGDR1+TaXUW3tEiF4644jSv+OXgvx0sWNJS\r\nIqtA8K576zb1/ifNOT4FwTTvCPhIRFfoKZICGtpXws5DWLieZSK4XAhZQH20jvWo\r\nhLvx8HCwgjH5I94uOmvnN4UGnhduX81HzRiocHv+ob/25+06YqRQF3jc0LcCej9d\r\nTc1Nw9qK55LC/RvKCEX24ko8cjcCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAd\r\nBgNVHQ4EFgQUgsGsjC7PzfMWrPtDZ2Utvi8cv/MwDgYDVR0PAQH/BAQDAgKEMA0G\r\nCSqGSIb3DQEBCwUAA4IBAQAUs1bMJwSa2ahz+PU+SA83nBSnWHA+CscKTaPWB676\r\nwVW+ZgiYBTzpw95bRcoTPTJgdYgJn8vDSMjF7bmZ3M+UI/x0ZPJkm8iU+cRikBIU\r\nkkOsIY6Up2r0qsOSKrsUcyv4X5TEAe4E9jUJhO2B6ipP/AZsg0hVgUy23VCeS8tf\r\nYJo1FrgqPZO2mgDtDMOvQmgeMaUTv0sPjMQ69CFL16ukiPoCHNHE/Fx8+eavf2zg\r\nPErOJQa1aguWNfbVTdpa4SMZpZXj8vDQHGyWvC78OAc2sg/QMwCDYvj0aX5ONHZR\r\n6YEtqeq6mduFcAYQ6lGtNw5BZq4zoq4gyi7exsqDbjSq\r\n-----END CERTIFICATE-----",
+                "pkcs7": "-----BEGIN PKCS7-----\r\nMIIDTAYJKoZIhvcNAQcCoIIDPTCCAzkCAQExADALBgkqhkiG9w0BBwGgggMhMIID\r\nHTCCAgWgAwIBAgIJe3+9M+LA660GMA0GCSqGSIb3DQEBCwUAMCwxKjAoBgNVBAMT\r\nIWRldi1meHlsZWxsNXhmejhydnJxLnVzLmF1dGgwLmNvbTAeFw0yNTEwMDMxOTM4\r\nMTdaFw0zOTA2MTIxOTM4MTdaMCwxKjAoBgNVBAMTIWRldi1meHlsZWxsNXhmejhy\r\ndnJxLnVzLmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB\r\nAL4i7g2wR0p8W3+ml96p7iyWzLXd3XfqHSa1pRvdzDvBtiKCPfEp6OpYwaGfSDZY\r\nxlc2ZXubDv/v3NTRBpACwBrBSORq0efDpuxYGVK4njBPwOpq6BbeU0Jz2NfKDNzl\r\nd6rK/2ebrGhrQpAbzqOekFqU0vGDR1+TaXUW3tEiF4644jSv+OXgvx0sWNJSIqtA\r\n8K576zb1/ifNOT4FwTTvCPhIRFfoKZICGtpXws5DWLieZSK4XAhZQH20jvWohLvx\r\n8HCwgjH5I94uOmvnN4UGnhduX81HzRiocHv+ob/25+06YqRQF3jc0LcCej9dTc1N\r\nw9qK55LC/RvKCEX24ko8cjcCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNV\r\nHQ4EFgQUgsGsjC7PzfMWrPtDZ2Utvi8cv/MwDgYDVR0PAQH/BAQDAgKEMA0GCSqG\r\nSIb3DQEBCwUAA4IBAQAUs1bMJwSa2ahz+PU+SA83nBSnWHA+CscKTaPWB676wVW+\r\nZgiYBTzpw95bRcoTPTJgdYgJn8vDSMjF7bmZ3M+UI/x0ZPJkm8iU+cRikBIUkkOs\r\nIY6Up2r0qsOSKrsUcyv4X5TEAe4E9jUJhO2B6ipP/AZsg0hVgUy23VCeS8tfYJo1\r\nFrgqPZO2mgDtDMOvQmgeMaUTv0sPjMQ69CFL16ukiPoCHNHE/Fx8+eavf2zgPErO\r\nJQa1aguWNfbVTdpa4SMZpZXj8vDQHGyWvC78OAc2sg/QMwCDYvj0aX5ONHZR6YEt\r\nqeq6mduFcAYQ6lGtNw5BZq4zoq4gyi7exsqDbjSqMQA=\r\n-----END PKCS7-----\r\n",
+                "subject": "deprecated"
+              }
+            ],
+            "skip_non_verifiable_callback_uri_confirmation_prompt": false,
+            "sso": false,
+            "sso_disabled": false,
+            "token_exchange": [],
+            "token_quota": [],
+            "web_origins": []
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "signing_keys"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "auth0_client_grant",
+      "name": "terraform_m2m_grant",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "allow_any_organization": false,
+            "audience": "https://dev-fxylell5xfz8rvrq.us.auth0.com/api/v2/",
+            "authorization_details_types": [],
+            "client_id": "bRA5VQNUr7G9LJ208mJlHjDrrmVGra1K",
+            "id": "cgr_oy7GpAj4U6CxuL3t",
+            "organization_usage": "",
+            "scopes": [
+              "blacklist:tokens",
+              "create:actions",
+              "create:authentication_methods",
+              "create:client_credentials",
+              "create:client_grants",
+              "create:client_keys",
+              "create:clients",
+              "create:connection_profiles",
+              "create:connections",
+              "create:connections_keys",
+              "create:custom_domains",
+              "create:custom_signing_keys",
+              "create:device_credentials",
+              "create:email_provider",
+              "create:email_templates",
+              "create:encryption_keys",
+              "create:event_streams",
+              "create:flows",
+              "create:flows_vault_connections",
+              "create:forms",
+              "create:guardian_enrollment_tickets",
+              "create:hooks",
+              "create:log_streams",
+              "create:network_acls",
+              "create:organization_client_grants",
+              "create:organization_connections",
+              "create:organization_discovery_domains",
+              "create:organization_invitations",
+              "create:organization_member_roles",
+              "create:organization_members",
+              "create:organizations",
+              "create:passwords_checking_job",
+              "create:phone_providers",
+              "create:phone_templates",
+              "create:resource_servers",
+              "create:role_members",
+              "create:roles",
+              "create:rules",
+              "create:scim_config",
+              "create:scim_token",
+              "create:self_service_profiles",
+              "create:shields",
+              "create:signing_keys",
+              "create:sso_access_tickets",
+              "create:user_attribute_profiles",
+              "create:user_custom_blocks",
+              "create:user_tickets",
+              "create:users",
+              "create:users_app_metadata",
+              "create:vdcs_templates",
+              "delete:actions",
+              "delete:anomaly_blocks",
+              "delete:authentication_methods",
+              "delete:branding",
+              "delete:client_credentials",
+              "delete:client_grants",
+              "delete:client_keys",
+              "delete:clients",
+              "delete:connection_profiles",
+              "delete:connections",
+              "delete:custom_domains",
+              "delete:custom_signing_keys",
+              "delete:device_credentials",
+              "delete:email_provider",
+              "delete:encryption_keys",
+              "delete:event_streams",
+              "delete:federated_connections_tokens",
+              "delete:flows",
+              "delete:flows_executions",
+              "delete:flows_vault_connections",
+              "delete:forms",
+              "delete:grants",
+              "delete:guardian_enrollments",
+              "delete:hooks",
+              "delete:log_streams",
+              "delete:network_acls",
+              "delete:organization_client_grants",
+              "delete:organization_connections",
+              "delete:organization_discovery_domains",
+              "delete:organization_invitations",
+              "delete:organization_member_roles",
+              "delete:organization_members",
+              "delete:organizations",
+              "delete:passwords_checking_job",
+              "delete:phone_providers",
+              "delete:phone_templates",
+              "delete:refresh_tokens",
+              "delete:resource_servers",
+              "delete:role_members",
+              "delete:roles",
+              "delete:rules",
+              "delete:rules_configs",
+              "delete:scim_config",
+              "delete:scim_token",
+              "delete:self_service_profiles",
+              "delete:sessions",
+              "delete:shields",
+              "delete:sso_access_tickets",
+              "delete:user_attribute_profiles",
+              "delete:user_custom_blocks",
+              "delete:users",
+              "delete:users_app_metadata",
+              "delete:vdcs_templates",
+              "read:actions",
+              "read:anomaly_blocks",
+              "read:attack_protection",
+              "read:authentication_methods",
+              "read:branding",
+              "read:client_credentials",
+              "read:client_grants",
+              "read:client_keys",
+              "read:clients",
+              "read:connection_profiles",
+              "read:connections",
+              "read:connections_keys",
+              "read:connections_options",
+              "read:custom_domains",
+              "read:custom_signing_keys",
+              "read:device_credentials",
+              "read:email_provider",
+              "read:email_templates",
+              "read:encryption_keys",
+              "read:entitlements",
+              "read:event_deliveries",
+              "read:event_streams",
+              "read:federated_connections_tokens",
+              "read:flows",
+              "read:flows_executions",
+              "read:flows_vault",
+              "read:flows_vault_connections",
+              "read:forms",
+              "read:grants",
+              "read:guardian_enrollments",
+              "read:guardian_factors",
+              "read:hooks",
+              "read:insights",
+              "read:limits",
+              "read:log_streams",
+              "read:logs",
+              "read:logs_users",
+              "read:mfa_policies",
+              "read:network_acls",
+              "read:organization_client_grants",
+              "read:organization_connections",
+              "read:organization_discovery_domains",
+              "read:organization_invitations",
+              "read:organization_member_roles",
+              "read:organization_members",
+              "read:organizations",
+              "read:organizations_summary",
+              "read:phone_providers",
+              "read:phone_templates",
+              "read:prompts",
+              "read:refresh_tokens",
+              "read:resource_servers",
+              "read:role_members",
+              "read:roles",
+              "read:rules",
+              "read:rules_configs",
+              "read:scim_config",
+              "read:scim_token",
+              "read:security_metrics",
+              "read:self_service_profile_custom_texts",
+              "read:self_service_profiles",
+              "read:sessions",
+              "read:shields",
+              "read:signing_keys",
+              "read:stats",
+              "read:tenant_settings",
+              "read:triggers",
+              "read:user_attribute_profiles",
+              "read:user_custom_blocks",
+              "read:user_idp_tokens",
+              "read:users",
+              "read:users_app_metadata",
+              "read:vdcs_templates",
+              "update:actions",
+              "update:attack_protection",
+              "update:authentication_methods",
+              "update:branding",
+              "update:client_credentials",
+              "update:client_grants",
+              "update:client_keys",
+              "update:clients",
+              "update:connection_profiles",
+              "update:connections",
+              "update:connections_keys",
+              "update:connections_options",
+              "update:custom_domains",
+              "update:custom_signing_keys",
+              "update:device_credentials",
+              "update:email_provider",
+              "update:email_templates",
+              "update:encryption_keys",
+              "update:event_deliveries",
+              "update:event_streams",
+              "update:flows",
+              "update:flows_vault_connections",
+              "update:forms",
+              "update:guardian_factors",
+              "update:hooks",
+              "update:limits",
+              "update:log_streams",
+              "update:mfa_policies",
+              "update:network_acls",
+              "update:organization_connections",
+              "update:organization_discovery_domains",
+              "update:organizations",
+              "update:phone_providers",
+              "update:phone_templates",
+              "update:prompts",
+              "update:resource_servers",
+              "update:roles",
+              "update:rules",
+              "update:rules_configs",
+              "update:scim_config",
+              "update:self_service_profile_custom_texts",
+              "update:self_service_profiles",
+              "update:sessions",
+              "update:shields",
+              "update:signing_keys",
+              "update:tenant_settings",
+              "update:triggers",
+              "update:user_attribute_profiles",
+              "update:users",
+              "update:users_app_metadata",
+              "update:vdcs_templates"
+            ],
+            "subject_type": "client"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "auth0_client.terraform_access"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.auth0_role",
+      "mode": "managed",
+      "type": "auth0_role",
+      "name": "roles",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "index_key": "dev-Administrator",
+          "schema_version": 0,
+          "attributes": {
+            "description": "Role providing full AWS administrative access - (Managed by Terraform) - Managed by Terraform",
+            "id": "rol_XSDQ9zosAt1GN86p",
+            "name": "dev-Administrator"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        },
+        {
+          "index_key": "dev-Developer",
+          "schema_version": 0,
+          "attributes": {
+            "description": "Role providing AWS developer access - (Managed by Terraform) - Managed by Terraform",
+            "id": "rol_3DepXixX9p05PpEF",
+            "name": "dev-Developer"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        },
+        {
+          "index_key": "dev-ReadOnly",
+          "schema_version": 0,
+          "attributes": {
+            "description": "Role providing AWS read-only access - (Managed by Terraform) - Managed by Terraform",
+            "id": "rol_FSXgrUV46UUCYb7e",
+            "name": "dev-ReadOnly"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.auth0_saml_action",
+      "mode": "managed",
+      "type": "auth0_action",
+      "name": "aws_role_mapping",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "code": "/* ============================================================================\n# terraform_integration_templates :: modules/auth0/templates/aws_role_mapping.js.tpl\n#      :: mdunbar :: 2025 oct 06 :: MIT License © 2025 Matthew Dunbar ::\n# =============================================================================\nPurpose:\n  Map Auth0 user groups to AWS IAM roles for SAML federation.\n\nTerraform variables:\n  - environment\n  - auth0_role_to_aws_role_arn_map (map\u003cstring, string\u003e)\n============================================================================ */\nexports.onExecutePostLogin = async (event, api) =\u003e {\n  const groupToRole = {\n    \"dev-Administrator\": \"arn:aws:iam::017425894299:role/dev-dev-Administrator,arn:aws:iam::017425894299:saml-provider/auth0-saml-provider\",\n    \"dev-Developer\": \"arn:aws:iam::017425894299:role/dev-dev-Developer,arn:aws:iam::017425894299:saml-provider/auth0-saml-provider\",\n    \"dev-ReadOnly\": \"arn:aws:iam::017425894299:role/dev-dev-ReadOnly,arn:aws:iam::017425894299:saml-provider/auth0-saml-provider\",\n  };\n\n  // Determine which Auth0 groups map to AWS roles\n  const userGroups = event.user.groups || [];\n  const userRoles = userGroups\n    .filter(group =\u003e groupToRole[group])\n    .map(group =\u003e groupToRole[group]);\n\n  if (userRoles.length \u003e 0) {\n    api.samlResponse.setAttribute(\"https://aws.amazon.com/SAML/Attributes/Role\", userRoles);\n    api.samlResponse.setAttribute(\"https://aws.amazon.com/SAML/Attributes/RoleSessionName\", event.user.email);\n    api.samlResponse.setAttribute(\"https://aws.amazon.com/SAML/Attributes/SessionDuration\", \"3600\");\n  }\n};",
+            "dependencies": [],
+            "deploy": true,
+            "id": "abfd9427-a403-4df4-b2f7-b95acdba0dc8",
+            "name": "AWS-Role-Mapping-dev",
+            "runtime": "node18",
+            "secrets": [],
+            "supported_triggers": [
+              {
+                "id": "post-login",
+                "version": "v3"
+              }
+            ],
+            "version_id": "ae3c1fea-afb0-446c-80a5-5b71a19e4062"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.aws_caller_identity.current"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.auth0_user",
+      "mode": "managed",
+      "type": "auth0_user",
+      "name": "this",
+      "provider": "provider[\"registry.terraform.io/auth0/auth0\"]",
+      "instances": [
+        {
+          "index_key": "mdunbar",
+          "schema_version": 0,
+          "attributes": {
+            "app_metadata": "",
+            "blocked": false,
+            "connection_name": "Username-Password-Authentication",
+            "custom_domain_header": null,
+            "email": "matthew@dunbar.ws",
+            "email_verified": false,
+            "family_name": "Dunbar",
+            "given_name": "Matthew",
+            "id": "auth0|68f1265fdd81c0033db615eb",
+            "name": "matthew@dunbar.ws",
+            "nickname": "matthew",
+            "password": "dOAx8ohfhy6Zm@[(",
+            "phone_number": "",
+            "phone_verified": false,
+            "picture": "https://s.gravatar.com/avatar/055a0a0e25ba3dd15fd87ce3c69912ba?s=480\u0026r=pg\u0026d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fma.png",
+            "user_id": "auth0|68f1265fdd81c0033db615eb",
+            "user_metadata": "",
+            "username": "mdunbar",
+            "verify_email": true
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "password"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.auth0_user.random_password.this"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.auth0_user",
+      "mode": "managed",
+      "type": "random_password",
+      "name": "this",
+      "provider": "provider[\"registry.terraform.io/hashicorp/random\"]",
+      "instances": [
+        {
+          "index_key": "mdunbar",
+          "schema_version": 3,
+          "attributes": {
+            "bcrypt_hash": "$2a$10$5x1/XaybFMs0ltVNIf94FeH0hIeLJxW5xjcarbHI7IZosBIqseDMK",
+            "id": "none",
+            "keepers": null,
+            "length": 16,
+            "lower": true,
+            "min_lower": 0,
+            "min_numeric": 0,
+            "min_special": 0,
+            "min_upper": 0,
+            "number": true,
+            "numeric": true,
+            "override_special": "!@#$%^\u0026*()-_=+[]{}\u003c\u003e?",
+            "result": "dOAx8ohfhy6Zm@[(",
+            "special": true,
+            "upper": true
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "bcrypt_hash"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "result"
+              }
+            ]
+          ],
+          "identity_schema_version": 0
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
