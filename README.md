@@ -1,6 +1,6 @@
 # Terraform Integration Templates
 
-[Terraform](terraform.io), by Hashicorp, is one of the most widely-adopted, open-source Infrastructure-as-Code (IaC) platforms in use world-wide.<sup><a href="#fn1" id="ref1">1</a></sup>
+[Terraform](https://terraform.io/), by Hashicorp, is one of the most widely-adopted, open-source Infrastructure-as-Code (IaC) platforms in use world-wide.<sup><a href="#fn1" id="ref1">1</a></sup>
 
 This repo provides a set of sample templates, implementing a fully-functional, integrated application stack incorporating centralized, SOC2-compliant, Single Sign-on (SSO) authentication to an AWS account, and a web-based application stack.
 
