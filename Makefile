@@ -4,7 +4,7 @@
 # Terraform Bootstrap Makefile
 # Safe by default — `make` prints usage instead of running bootstrap automatically.
 # ------------------------------------------------------------------------------
-# There are four main prerequite steps to bootstrap a new AWS environment for 
+# There are four main prerequisite steps to bootstrap a new AWS environment for 
 # Terraform best practices:
 # 	1. Create an IAM role with policies for Terraform to use.
 # 	2. Create a KMS key for encrypting the S3 bucket.
@@ -17,7 +17,7 @@
 # There is also an optional prior step, if you're working with a federated identity
 # provider such as Auth0:
 # 	0. Create the Auth0 SAML provider, roles, mappings, and users
-# Using this approach allows implemenetaiton of a best-practice approach of a
+# Using this approach allows implementation of a best-practice approach of a
 #   Role-based Access Control (RBAC) model for AWS access
 # =============================================================================
 # Variables
@@ -34,11 +34,19 @@ KMS_DIR 	:= 03.kms
 DDB_DIR 	:= 04.dynamodb
 S3_DIR  	:= 05.s3
 
-# Run terraform init silently (once)
-$(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform init -no-color >/dev/null 2>&1)
+# Get the active AWS account ID
+ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text 2>/dev/null)
+ACCOUNT_ALIAS := $(shell aws iam list-account-aliases --query 'AccountAliases[0]' --output text 2>/dev/null || aws sts get-caller-identity --query Account --output text)
 
-# Capture Terraform output into a global Make variable
-ACCOUNT_ID := $(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform output -raw account_id)
+ifeq ($(ACCOUNT_ID),)
+$(error AWS CLI is not configured properly. Please run 'aws configure' to set up your credentials.)
+endif
+
+# # Run terraform init silently (once)
+# $(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform init -no-color >/dev/null 2>&1)
+
+# # Capture Terraform output into a global Make variable
+# ACCOUNT_ID := $(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform output -raw account_id)
 
 # ---------------------------------------------------------------------
 # Default target — always first, to prevent accidental apply.
@@ -49,7 +57,7 @@ usage:
 	@echo "Preflight checks:"
 	@echo ""
 	@echo "  make check-prereqs       Verify Terraform and AWS CLI are installed and configured"
-	@echo "  make account_id          Retrive and display AWS account ID variable"
+	@echo "  make account_info        Retrieve and display AWS account information for the currently account profile in use"
 	@echo ""
 	@echo "Terraform plan targets (no changes made):"
 	@echo ""
@@ -87,11 +95,21 @@ check-prereqs:
 	@echo "All prerequisites are met."
 
 # ---------------------------------------------------------------------
+# set AWS account ID variable
+.PHONY: account_info
+account_info:
+	@if [ "$(ACCOUNT_ALIAS)" != "None" ] && [ -n "$(ACCOUNT_ALIAS)" ]; then \
+		echo "=== You are currently working with AWS Account Alias: $(ACCOUNT_ALIAS) ($(ACCOUNT_ID)) ==="; \
+	else \
+		echo "=== You are currently working with AWS Account ID: $(ACCOUNT_ID) ==="; \
+	fi
+
+# ---------------------------------------------------------------------
 # Plan all components
 .PHONY: plan
 plan:
 	@echo "=== [Plan] Terraform plan for all components ==="
-	plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
+	account_info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
 
 # ---------------------------------------------------------------------
 # Plan Auth0
@@ -139,13 +157,6 @@ plan-s3:
 # Primary orchestrator
 .PHONY: bootstrap
 bootstrap: account_id auth0-bootstrap saml-bootstrap iam-bootstrap kms-bootstrap dynamodb-bootstrap s3-bootstrap migrate-backends
-
-# ---------------------------------------------------------------------
-# set AWS account ID variable
-.PHONY: account_id
-account_id:
-	@echo "=== [Account] Setting AWS account ID variable ==="
-	@echo "AWS Account ID: $(ACCOUNT_ID)"
 
 # ---------------------------------------------------------------------
 # set up Auth0 SAML provider and roles
@@ -206,10 +217,12 @@ s3-bootstrap:
 .PHONY: migrate-backends
 migrate-backends:
 	@echo "=== [S3] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(S3_DIR) && mv s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
+ 	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
 	@echo "=== [DynamoDB] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(DDB_DIR) && echo "mv dynamodb.backend.tf.noop dynamodb.backend.tf && terraform init -reconfigure -migrate-state"
+ 	cd $(DEV_DIR)/$(DDB_DIR) && cp dynamodb.backend.tf.noop dynamodb.backend.tf && terraform init -migrate-state
 	@echo "=== [KMS] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(KMS_DIR) && echo "mv kms.backend.tf.noop kms.backend.tf && terraform init -reconfigure -migrate-state"
+ 	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
 	@echo "=== [IAM] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(IAM_DIR) && echo "mv iam.backend.tf.noop iam.backend.tf && terraform init -reconfigure -migrate-state"
+ 	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
+	@echo "=== [SAML] Migrating backend to remote ==="
+	cd $(DEV_DIR)/$(SAML_DIR) && cp saml.backend.tf.noop saml.backend.tf && terraform init -migrate-state
