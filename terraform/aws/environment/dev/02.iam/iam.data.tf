@@ -5,6 +5,10 @@
 # AWS Account info
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_saml_provider" "auth0_saml" {
+  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/auth0-saml-provider"
+}
+
 # outputs.tf
 output "account_id" {
   value = data.aws_caller_identity.current.account_id

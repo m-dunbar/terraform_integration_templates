@@ -7,13 +7,17 @@
 data "aws_iam_policy_document" "assume_role_auth0" {
   statement {
     sid     = "AssumeRoleViaAuth0"
-    actions = [
-      "sts:AssumeRole"
-    ]
+    actions = ["sts:AssumeRoleWithSAML"]
 
     principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/auth0_saml_provider"]
+      type        = "Federated"
+      identifiers = [data.aws_iam_saml_provider.auth0_saml.arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "SAML:aud"
+      values   = ["https://signin.aws.amazon.com/saml"]
     }
   }
 }
