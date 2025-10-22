@@ -111,6 +111,11 @@ Within the respective AWS account(s), those would map directly to:
 
 Auth0 provides centralized user management, allowing implementation and management for all Auth0 supported forms of authentication (including Enterprise SSO).
 
+## TODO
+
+- add migration of auth0 tfstate to an S3 backend
+- complete automation of sending 'password reset' email for new users (currently, that would be done via the Auth0 console UI)
+
 ---
 
 © 2025 Matthew Dunbar  
