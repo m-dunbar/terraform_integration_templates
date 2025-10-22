@@ -15,7 +15,7 @@ DynamoDB is used here to provide a central source for terraform locks.  This pre
 | server_side_encryption_kms_key_arn | data.aws_kms_alias.terraform.arn | locical referernce to the `terraform` key (via human-friendly alias) |
 | ttl_enabled | false | no ttl is required |
 
-<hr>
+---
 
 © 2025 Matthew Dunbar  
 (See LICENSE for details.)

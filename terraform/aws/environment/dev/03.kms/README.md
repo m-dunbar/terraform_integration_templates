@@ -10,7 +10,7 @@ While the initial `terraform` key is sufficient for initial implementation, any 
 
 - add a kms.keys.tf template, along with supporting variables declaration, and a list of additional keys to be maintained.
 
-<hr>
+---
 
 © 2025 Matthew Dunbar  
 (See LICENSE for details.)
