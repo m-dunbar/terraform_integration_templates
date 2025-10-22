@@ -27,7 +27,7 @@ SHELL := /bin/bash
 TF_ENV  := terraform/aws/environment
 DEV_DIR := $(TF_ENV)/dev
 
-AUTH0_DIR := auth0
+AUTH0_DIR := terraform/auth0
 SAML_DIR  := 01.saml
 IAM_DIR   := 02.iam
 KMS_DIR 	:= 03.kms
@@ -107,16 +107,16 @@ account-info:
 # ---------------------------------------------------------------------
 # Plan all components
 .PHONY: plan
-plan:
-	@echo "=== [Plan] Terraform plan for all components ==="
-	account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
+plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
+	@echo
+	@echo "=== [Plan] Completed for all components ==="
 
 # ---------------------------------------------------------------------
 # Plan Auth0
 .PHONY: plan-auth0
 plan-auth0:
 	@echo -e "\nPlan Auth0"
-	cd terraform/$(AUTH0_DIR) && terraform plan
+	cd $(AUTH0_DIR) && terraform plan
 
 # ---------------------------------------------------------------------
 # Plan SAML
