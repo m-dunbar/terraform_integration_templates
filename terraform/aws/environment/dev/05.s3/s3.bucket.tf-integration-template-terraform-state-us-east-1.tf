@@ -10,8 +10,8 @@ resource "aws_s3_bucket" "tf_integration_template_terraform_state_us_east_1" {
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "drontheim_terraform_state_us_east_1" {
-  bucket = aws_s3_bucket.drontheim_terraform_state_us_east_1.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "tf_integration_template_terraform_state_us_east_1" {
+  bucket = aws_s3_bucket.tf_integration_template_terraform_state_us_east_1.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -21,8 +21,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "drontheim_terrafo
   }
 }
 
-resource "aws_s3_bucket_versioning" "drontheim_terraform_state_us_east_1" {
-  bucket = aws_s3_bucket.drontheim_terraform_state_us_east_1.id
+resource "aws_s3_bucket_versioning" "tf_integration_template_terraform_state_us_east_1" {
+  bucket = aws_s3_bucket.tf_integration_template_terraform_state_us_east_1.id
   versioning_configuration {
     status = "Enabled"
   }
