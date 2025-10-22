@@ -15,6 +15,10 @@ This also means if you are testing this code, you might need to tweak the "bucke
 
 As an aside, consideration should be given to the risk that the potential bad actors to leverage taking over old bucket names previously used by other account holders once those buckets are deleted.  This means when coding apps that use S3, the s3 bucket path URLs should never be directly exposed.  It is best practice to use edge services such as CloudFront Distributions instead for all exposed, world-facing path references.  This allows the use of fully-managed URLs for resource access, which precludes takeover at an unspecified future date if a bucket is no longer in use, deleted, and returned to the global namespace.
 
+## TODO
+
+- implement module for creation of standardized buckets using an s3.bucket_list.auto.tfvars
+
 ---
 
 © 2025 Matthew Dunbar  
