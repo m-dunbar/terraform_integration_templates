@@ -93,13 +93,19 @@ When omitting the manual edition of a password, Auth0 will automatically send an
 
 For defining Auth0 roles, role_names (and optional role_descriptions) are provided in **auth0.roles.auto.tfvars**
 
-In this examples those include:
+In this example those include, on the Auth0-side:
 
-- \<environment\>-Administrator
-- \<environment\>-Developer
+- \<environment\>-Administrators
+- \<environment\>-Developers
 - \<environment\>-ReadOnly
 
 The environment prefix allows for environment-level granularity, as developers often have elevated privileges in non-production environments.
+
+Within the respective AWS account(s), those would map directly to:
+
+- Admonistrators
+- Developers
+- ReadOnly
 
 #### Users
 
