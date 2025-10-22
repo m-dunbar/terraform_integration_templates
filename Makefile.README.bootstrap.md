@@ -28,7 +28,46 @@ See the section in the main README that explains naming conventions and the `.no
 
 ## Performing the initial bootstrap
 
-[instructions to be added here once Makefile structure reaches a stable state]
+Initial bootstrapping is accomplished leveraging `make`, alleviating the need to navigate to each respective resource directory manually to perform `terraform plan` or `terraform apply`.  Given that all actions when working with IaC should be deliberate, the default recipe within Makefile provides usage.
+
+```
+%# make
+Usage: make <target>
+
+Preflight checks:
+
+  make check-prereqs       Verify Terraform and AWS CLI are installed and configured
+  make account-info        Retrieve and display AWS account information for the currently account profile in use
+
+Terraform plan targets (no changes made):
+
+  make plan                Plan all components
+
+  make plan-auth0          Plan Auth0 component
+  make plan-saml           Plan SAML component
+  make plan-iam            Plan IAM component
+  make plan-kms            Plan KMS component
+  make plan-dynamodb       Plan DynamoDB component
+  make plan-s3             Plan S3 component
+
+Terraform bootstrap targets:
+
+  make bootstrap           Run full sequence: Auth0 → SAML → IAM → KMS → DDB → S3 → migrate
+
+  make auth0-bootstrap     Initialize and apply - create Auth0 SAML provider, roles, mappings, and users
+  make saml-bootstrap      Initialize and apply - create AWS SAML provider
+  make iam-bootstrap       Initialize and apply - create terraform-provider IAM role + policies
+  make kms-bootstrap       Initialize and apply - create terraform KMS key
+  make dynamodb-bootstrap  Initialize and apply - Create DynamoDB table for locks
+  make s3-bootstrap        Initialize and apply - create S3 bucket for tfstate
+  make migrate-backends    Migrate all tfstate backends to S3
+
+NOTE: No actions are performed by default — use explicit recipe targets.
+```
+
+Sanity-checking for initial requirements is provided via the recipe `check-prereqs`.  An additional safety measure is offered via the recipe `account-info`
+
+Implementation is modular, allowing individual plan or apply for sets of resources.
 
 ---
 

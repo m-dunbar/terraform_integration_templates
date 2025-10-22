@@ -57,7 +57,7 @@ usage:
 	@echo "Preflight checks:"
 	@echo ""
 	@echo "  make check-prereqs       Verify Terraform and AWS CLI are installed and configured"
-	@echo "  make account_info        Retrieve and display AWS account information for the currently account profile in use"
+	@echo "  make account-info        Retrieve and display AWS account information for the currently account profile in use"
 	@echo ""
 	@echo "Terraform plan targets (no changes made):"
 	@echo ""
@@ -72,7 +72,7 @@ usage:
 	@echo ""
 	@echo "Terraform bootstrap targets:"
 	@echo ""
-	@echo "  make bootstrap           Run full sequence: IAM → KMS → DDB → S3 → migrate"
+	@echo "  make bootstrap           Run full sequence: Auth0 → SAML → IAM → KMS → DDB → S3 → migrate"
 	@echo ""
 	@echo "  make auth0-bootstrap     Initialize and apply - create Auth0 SAML provider, roles, mappings, and users"
 	@echo "  make saml-bootstrap      Initialize and apply - create AWS SAML provider"
@@ -82,7 +82,7 @@ usage:
 	@echo "  make s3-bootstrap        Initialize and apply - create S3 bucket for tfstate"
 	@echo "  make migrate-backends    Migrate all tfstate backends to S3"
 	@echo ""
-	@echo "NOTE: No actions are performed by default — use explicit targets."
+	@echo "NOTE: No actions are performed by default — use explicit recipe targets."
 
 # ---------------------------------------------------------------------
 # Check prerequisites
@@ -96,8 +96,8 @@ check-prereqs:
 
 # ---------------------------------------------------------------------
 # set AWS account ID variable
-.PHONY: account_info
-account_info:
+.PHONY: account-info
+account-info:
 	@if [ "$(ACCOUNT_ALIAS)" != "None" ] && [ -n "$(ACCOUNT_ALIAS)" ]; then \
 		echo "=== You are currently working with AWS Account Alias: $(ACCOUNT_ALIAS) ($(ACCOUNT_ID)) ==="; \
 	else \
@@ -109,7 +109,7 @@ account_info:
 .PHONY: plan
 plan:
 	@echo "=== [Plan] Terraform plan for all components ==="
-	account_info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
+	account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
 
 # ---------------------------------------------------------------------
 # Plan Auth0
@@ -156,7 +156,7 @@ plan-s3:
 # ---------------------------------------------------------------------
 # Primary orchestrator
 .PHONY: bootstrap
-bootstrap: account_id auth0-bootstrap saml-bootstrap iam-bootstrap kms-bootstrap dynamodb-bootstrap s3-bootstrap migrate-backends
+bootstrap: account-info auth0-bootstrap saml-bootstrap iam-bootstrap kms-bootstrap dynamodb-bootstrap s3-bootstrap migrate-backends
 
 # ---------------------------------------------------------------------
 # set up Auth0 SAML provider and roles
@@ -217,12 +217,12 @@ s3-bootstrap:
 .PHONY: migrate-backends
 migrate-backends:
 	@echo "=== [S3] Migrating backend to remote ==="
- 	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
+	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
 	@echo "=== [DynamoDB] Migrating backend to remote ==="
 	cd $(DEV_DIR)/$(DDB_DIR) && cp dynamodb.backend.tf.noop dynamodb.backend.tf && terraform init -migrate-state
 	@echo "=== [KMS] Migrating backend to remote ==="
- 	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
+	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
 	@echo "=== [IAM] Migrating backend to remote ==="
- 	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
+	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
 	@echo "=== [SAML] Migrating backend to remote ==="
 	cd $(DEV_DIR)/$(SAML_DIR) && cp saml.backend.tf.noop saml.backend.tf && terraform init -migrate-state
