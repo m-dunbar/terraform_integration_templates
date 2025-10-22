@@ -4,12 +4,23 @@
 # =============================================================================
 terraform {
   required_providers {
+    auth0 = {
+      source  = "auth0/auth0"
+      version = ">= 1.31.0"
+    }
+
     aws = {
       source  = "hashicorp/aws"
       version = "~> 6"
     }
   }
   required_version = ">= 1.13.3, < 2.0.0"
+}
+
+provider "auth0" {
+  domain        = var.auth0_domain
+  client_id     = var.auth0_client_id
+  client_secret = var.auth0_client_secret
 }
 
 # Configure the AWS Provider
