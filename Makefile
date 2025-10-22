@@ -217,12 +217,12 @@ s3-bootstrap:
 .PHONY: migrate-backends
 migrate-backends:
 	@echo "=== [S3] Migrating backend to remote ==="
-#  	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
+ 	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
 	@echo "=== [DynamoDB] Migrating backend to remote ==="
 	cd $(DEV_DIR)/$(DDB_DIR) && cp dynamodb.backend.tf.noop dynamodb.backend.tf && terraform init -migrate-state
 	@echo "=== [KMS] Migrating backend to remote ==="
-#  	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
+ 	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
 	@echo "=== [IAM] Migrating backend to remote ==="
-#  	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
+ 	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
 	@echo "=== [SAML] Migrating backend to remote ==="
-# 	cd $(DEV_DIR)/$(SAML_DIR) && cp saml.backend.tf.noop saml.backend.tf && terraform init -migrate-state
+	cd $(DEV_DIR)/$(SAML_DIR) && cp saml.backend.tf.noop saml.backend.tf && terraform init -migrate-state
