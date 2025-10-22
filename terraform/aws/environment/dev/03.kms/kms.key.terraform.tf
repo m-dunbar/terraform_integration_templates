@@ -13,16 +13,8 @@ module "kms" {
   multi_region            = true
 
   # Policy
-  enable_default_policy = true
-  key_owners            = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.environment}-Administrator"]
-  key_users = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-provisioner",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.environment}-Administrator"
-  ]
-  key_service_users     = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/dynamodb-role",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/s3-role"
-  ]
+  enable_default_policy = false
+  policy = data.aws_iam_policy_document.terraform_key_policy.json
 
   # Aliases
   computed_aliases = {
@@ -34,6 +26,109 @@ module "kms" {
   tags = {
     Environment = var.environment
     Managed_by  = "Terraform"
+  }
+}
+
+data "aws_iam_policy_document" "terraform_key_policy" {
+  statement {
+    sid = "AllowRootAccountFullAccess"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowKeyAdministrators"
+    principals {
+      type        = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Administrators"
+      ]
+    }
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:List*",
+      "kms:Put*",
+      "kms:Update*",
+      "kms:Revoke*",
+      "kms:Disable*",
+      "kms:Get*",
+      "kms:Delete*",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:RotateKeyOnDemand"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowKeyUsers"
+    principals {
+      type        = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-provisioner",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Developers"
+      ]
+    }
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowAWSServiceUsage"
+    principals {
+      type        = "Service"
+      identifiers = [
+        "s3.amazonaws.com",
+        "dynamodb.amazonaws.com"
+      ]
+    }
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowKeyUsersCreateGrantsForServices"
+    principals {
+      type        = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/terraform-provisioner",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Administrators",
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Developers"
+
+      ]
+    }
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = ["true"]
+    }
+    actions = [
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:RevokeGrant"
+    ]
+    resources = ["*"]
   }
 }
 # =============================================================================
