@@ -1,4 +1,4 @@
-# AWS Identity and Access Management (IAM) _[98% complete]_
+# AWS Identity and Access Management (IAM)
 
 Current AWS recommended best practice for access to AWS environments is via Role-Based Access Control (RBAC).  Permissions are assigned at the role level, and no users are ever created within the AWS account itself.  Users instead access the environment based upon permissions to assume specific roles, managed by way of SAML-based mappings within the Identity Provider (IdP).
 
@@ -16,12 +16,7 @@ In this example, Auth0 is the IdP.  Users are created within Auth0, and assigned
 
 Policy assignments are a combination of both AWS-managed and customer Managed Policies.
 
-## TODO
-
-- ~~complete module-based provisioning of roles other than terraform-provisioner~~
-- test completed terraform
-
-<hr>
+---
 
 © 2025 Matthew Dunbar  
 (See LICENSE for details.)

@@ -8,6 +8,7 @@ module "iam_role_saml" {
   for_each = { for role in var.iam_role_list : role.role_name => role }
 
   name              = each.key
+  use_name_prefix   = false
   enable_saml       = true
   saml_provider_ids = local.saml_provider_id
   policies          = each.value.policies
