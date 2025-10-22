@@ -22,7 +22,7 @@ locals {
 
   auth0_role_to_aws_role_arn_map = {
     for mapping in var.auth0_role_to_aws_role_map :
-    mapping.auth0_role => "arn:aws:iam::${local.aws_account_id}:role/${local.environment}-${mapping.aws_role_name},arn:aws:iam::${local.aws_account_id}:saml-provider/${local.saml_provider_name}"
+    mapping.auth0_role => "arn:aws:iam::${local.aws_account_id}:role/${mapping.aws_role_name},arn:aws:iam::${local.aws_account_id}:saml-provider/${local.saml_provider_name}"
   }
 }
 
