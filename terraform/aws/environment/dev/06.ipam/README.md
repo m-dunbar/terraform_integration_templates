@@ -12,16 +12,20 @@ It is most efficient and secure to provision within non-routable RFC ranges.  Th
 
 Pool defines the size and range of the overall address space.  In a well-defined environment, CIDR allocations follow a plan, with blocks sized to be large enough, but not wasteful of IP resources.
 
-### Plan pool allocation
+### Plan pool allocation CIDRs
 
 For a project of this size, a moderately sized block is sufficient.
+
+#### Top-level CIDR
 
 ```text
 Top Level IPAM Pool (main)
 10.0.0.0/18  (AWS account)
+```
 
-PRODUCTION
+#### Production
 
+```test
 us-east-1 VPC: 10.0.0.0/20
  ├─ AZ-a: [10.0.0.0/22]
  │    ├─ Public:  10.0.0.0/26  (ALB, NAT GW)
@@ -43,9 +47,11 @@ us-west-2 VPC: 10.0.16.0/20
  └─ AZ-c: [10.0.24.0/22]
       ├─ Public:  10.0.24.0/26
       └─ Private: 10.0.24.64/22
+```
 
-STAGING
+#### Staging
 
+```text
 us-east-1 VPC: 10.0.32.0/22
  ├─ AZ-a: [10.0.32.0/24]
  │    ├─ Public:  10.0.32.0/26
@@ -67,9 +73,11 @@ us-west-2 VPC: 10.0.36.0/22
  └─ AZ-c: [10.0.38.0/24]
       ├─ Public:  10.0.38.0/26
       └─ Private: 10.0.38.64/24
+```
 
-QA
+#### QA
 
+```text
 us-east-1 VPC: 10.0.40.0/22
  ├─ AZ-a: [10.0.40.0/24]
  │    ├─ Public:  10.0.40.0/26
@@ -77,16 +85,16 @@ us-east-1 VPC: 10.0.40.0/22
  └─ AZ-b: [10.0.41.0/24]
       ├─ Public:  10.0.41.0/26
       └─ Private: 10.0.41.64/24
+```
 
-DEV
+#### Dev
 
+```text
 us-east-1 VPC: 
 AZ subnet: [10.0.48.0/24]
  ├─ Public:  10.0.48.0/26
  └─ Private: 10.0.48.64/26
 ```
-
-## CIDR PL
 
 ---
 
