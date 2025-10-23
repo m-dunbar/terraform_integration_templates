@@ -33,7 +33,10 @@ IAM_DIR   := 02.iam
 KMS_DIR 	:= 03.kms
 DDB_DIR 	:= 04.dynamodb
 S3_DIR  	:= 05.s3
+IPAM_DIR  := 06.ipam
+VPC_DIR   := 07.vpc
 
+# --------------------------------------
 # Get the active AWS account ID
 ACCOUNT_ID := $(shell aws sts get-caller-identity --query Account --output text 2>/dev/null)
 ACCOUNT_ALIAS := $(shell aws iam list-account-aliases --query 'AccountAliases[0]' --output text 2>/dev/null || aws sts get-caller-identity --query Account --output text)
@@ -42,11 +45,33 @@ ifeq ($(ACCOUNT_ID),)
 $(error AWS CLI is not configured properly. Please run 'aws configure' to set up your credentials.)
 endif
 
-# # Run terraform init silently (once)
-# $(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform init -no-color >/dev/null 2>&1)
+# Supporting Functions
+# -------------------------------------
+define apply # $(1): directory
+	cd $(1) && \
+	if [ ! -d .terraform ]; then \
+		terraform init; \
+	fi && \
+	terraform apply -auto-approve
+endef
 
-# # Capture Terraform output into a global Make variable
-# ACCOUNT_ID := $(shell cd $(DEV_DIR)/$(IAM_DIR) && terraform output -raw account_id)
+define migrate # $(1): directory, $(2): backend filename prefix
+	cd $(1) && \
+	cp $(2).backend.tf.noop $(2).backend.tf && \
+	terraform init -migrate-state
+endef
+
+define plan # $(1): directory, $(2): plan options, $(3): backend filename prefix
+	cd $(1) && \
+	if [ ! -d .terraform ]; then \
+		terraform init; \
+	fi && \
+	if [ "$(strip $(3))" ]; then \
+		cp $(3).backend.tf.noop $(3).backend.tf; \
+	fi && \
+	terraform plan $(2)
+endef
+
 
 # ---------------------------------------------------------------------
 # Default target — always first, to prevent accidental apply.
@@ -69,6 +94,8 @@ usage:
 	@echo "  make plan-kms            Plan KMS component"
 	@echo "  make plan-dynamodb       Plan DynamoDB component"
 	@echo "  make plan-s3             Plan S3 component"
+	@echo "  make plan-ipam           Plan IPAM component"
+	@echo "  make plan-vpc            Plan VPC component"
 	@echo ""
 	@echo "Terraform bootstrap targets:"
 	@echo ""
@@ -81,6 +108,12 @@ usage:
 	@echo "  make dynamodb-bootstrap  Initialize and apply - Create DynamoDB table for locks"
 	@echo "  make s3-bootstrap        Initialize and apply - create S3 bucket for tfstate"
 	@echo "  make migrate-backends    Migrate all tfstate backends to S3"
+	@echo ""
+	@echo "Post-bootstrap targets:"
+	@echo ""
+	@echo "  make ipam-apply      		Initialize and apply - provision IPAM map"
+	@echo "  make vpc-apply       		Initialize and apply - provision VPC and subnets"
+
 	@echo ""
 	@echo "NOTE: No actions are performed by default — use explicit recipe targets."
 
@@ -107,7 +140,7 @@ account-info:
 # ---------------------------------------------------------------------
 # Plan all components
 .PHONY: plan
-plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
+plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3 plan-ipam plan-vpc
 	@echo
 	@echo "=== [Plan] Completed for all components ==="
 
@@ -116,43 +149,60 @@ plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3
 .PHONY: plan-auth0
 plan-auth0:
 	@echo -e "\nPlan Auth0"
-	cd $(AUTH0_DIR) && terraform plan
+	$(call plan,$(AUTH0_DIR))
 
 # ---------------------------------------------------------------------
 # Plan SAML
 .PHONY: plan-saml
 plan-saml:
 	@echo -e "\nPlan SAML"
-	cd $(DEV_DIR)/$(SAML_DIR) && terraform plan
+	$(call plan,$(DEV_DIR)/$(SAML_DIR))
 
 # ---------------------------------------------------------------------
 # Plan IAM
 .PHONY: plan-iam
 plan-iam:
 	@echo -e "\nPlan IAM"
-	cd $(DEV_DIR)/$(IAM_DIR) && terraform plan
+	$(call plan,$(DEV_DIR)/$(IAM_DIR))
 
 # ---------------------------------------------------------------------
 # Plan KMS
 .PHONY: plan-kms
 plan-kms:
 	@echo -e "\nPlan KMS"
-	cd $(DEV_DIR)/$(KMS_DIR) && terraform plan
+	$(call plan,$(DEV_DIR)/$(KMS_DIR))
 
 # ---------------------------------------------------------------------
 # Plan DynamoDB
 .PHONY: plan-dynamodb
 plan-dynamodb:
 	@echo -e "\nPlan DynamoDB"
-	cd $(DEV_DIR)/$(DDB_DIR) && terraform plan -var "bootstrap_plan=true"
+	$(call plan,$(DEV_DIR)/$(DDB_DIR),-var "bootstrap_plan=true")
 
 # ---------------------------------------------------------------------
 # Plan S3
 .PHONY: plan-s3
 plan-s3:
 	@echo -e "\nPlan S3"
-	cd $(DEV_DIR)/$(S3_DIR) && terraform plan
+	$(call plan,$(DEV_DIR)/$(S3_DIR))
 
+# ---------------------------------------------------------------------
+# Plan IPAM
+.PHONY: plan-ipam
+plan-ipam:
+	@echo -e "\nPlan IPAM"
+	$(call plan,$(DEV_DIR)/$(IPAM_DIR),,ipam)
+
+# ---------------------------------------------------------------------
+# Plan VPC
+.PHONY: plan-vpc
+plan-vpc:
+	@echo -e "\nPlan VPC"
+	$(call plan,$(DEV_DIR)/$(VPC_DIR),,vpc)
+
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Primary orchestrator
 .PHONY: bootstrap
@@ -162,67 +212,75 @@ bootstrap: account-info auth0-bootstrap saml-bootstrap iam-bootstrap kms-bootstr
 # set up Auth0 SAML provider and roles
 .PHONY: auth0-bootstrap
 auth0-bootstrap:
-	@echo "=== [Auth0] Initializing Terraform ==="
 	@echo "=== [Auth0] Creating Auth0 SAML provider, roles, mappings, and users ==="
-	cd $(AUTH0_DIR) && terraform init && \
-	terraform apply -auto-approve
+	$(call apply,$(AUTH0_DIR))
 
 # ---------------------------------------------------------------------
 # SAML setup
 .PHONY: saml-bootstrap
 saml-bootstrap:
-	@echo "=== [AWS] Initializing SAML Terraform ==="
 	@echo "=== [AWS] Creating AWS SAML provider ==="
-	cd $(DEV_DIR)/$(SAML_DIR) && terraform init && \
-	terraform apply -auto-approve
-
+	$(call apply,$(DEV_DIR)/$(SAML_DIR))
 
 # ---------------------------------------------------------------------
 # IAM setup
 .PHONY: iam-bootstrap
 iam-bootstrap:
-	@echo "=== [AWS] Initializing IAM Terraform ==="
 	@echo "=== [AWS] Creating IAM role(s) and policies ==="
-	cd $(DEV_DIR)/$(IAM_DIR) && terraform init && \
-	terraform apply -auto-approve
+	$(call apply,$(DEV_DIR)/$(IAM_DIR))
 
 # ---------------------------------------------------------------------
 # KMS setup
 .PHONY: kms-bootstrap
 kms-bootstrap:
-	@echo "=== [KMS] Initializing Terraform ==="
 	@echo "=== [KMS] Creating KMS key and access policy ==="
-	cd $(DEV_DIR)/$(KMS_DIR) && terraform init && \
-	terraform apply -auto-approve
+	$(call apply,$(DEV_DIR)/$(KMS_DIR))
 
 # ---------------------------------------------------------------------
 # DynamoDB setup
 .PHONY: dynamodb-bootstrap
 dynamodb-bootstrap:
 	@echo "=== [DynamoDB] Creating lock table ==="
-	cd $(DEV_DIR)/$(DDB_DIR) && terraform init && \
-	terraform apply -auto-approve
+	$(call apply,$(DEV_DIR)/$(DDB_DIR))
 
 # ---------------------------------------------------------------------
 # S3 setup
 .PHONY: s3-bootstrap
 s3-bootstrap:
-	@echo "=== [S3] Initializing Terraform ==="
-	@echo "=== [S3] Creating S3 bucket for tfstate (manual or CLI) ==="q
-	cd $(DEV_DIR)/$(S3_DIR) && terraform init && \
-	terraform apply -auto-approve
+	@echo "=== [S3] Creating S3 bucket for tfstate (manual or CLI) ==="
+	$(call apply,$(DEV_DIR)/$(S3_DIR))
 
 # ---------------------------------------------------------------------
 # Backend migration
 .PHONY: migrate-backends
 migrate-backends:
 	@echo "=== [S3] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(S3_DIR) && cp s3.backend.tf.noop s3.backend.tf && terraform init -migrate-state
+	$(call migrate,$(DEV_DIR)/$(S3_DIR),s3)
 	@echo "=== [DynamoDB] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(DDB_DIR) && cp dynamodb.backend.tf.noop dynamodb.backend.tf && terraform init -migrate-state
+	$(call migrate,$(DEV_DIR)/$(DDB_DIR),dynamodb)
 	@echo "=== [KMS] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(KMS_DIR) && cp kms.backend.tf.noop kms.backend.tf && terraform init -migrate-state
+	$(call migrate,$(DEV_DIR)/$(KMS_DIR),kms)
 	@echo "=== [IAM] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(IAM_DIR) && cp iam.backend.tf.noop iam.backend.tf && terraform init -migrate-state
+	$(call migrate,$(DEV_DIR)/$(IAM_DIR),iam)
 	@echo "=== [SAML] Migrating backend to remote ==="
-	cd $(DEV_DIR)/$(SAML_DIR) && cp saml.backend.tf.noop saml.backend.tf && terraform init -migrate-state
+	$(call migrate,$(DEV_DIR)/$(SAML_DIR),saml)
+
+# ---------------------------------------------------------------------
+# Post-bootstrap: IPAM setup
+.PHONY: post-bootstrap
+post-bootstrap: ipam-apply vpc-apply
+	@echo "=== [Post-Bootstrap] for all components ==="
+
+# ---------------------------------------------------------------------
+# IPAM setup
+.PHONY: ipam-apply
+ipam-apply:
+	@echo "=== [IPAM] Defining CIDR Pools ==="
+	$(call apply,$(DEV_DIR)/$(IPAM_DIR))
+
+# ---------------------------------------------------------------------
+# VPC setup
+.PHONY: vpc-apply
+vpc-apply:
+	@echo "=== [VPC] Defining VPC and subnets ==="
+	$(call apply,$(DEV_DIR)/$(VPC_DIR))
