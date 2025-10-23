@@ -53,7 +53,7 @@ terraform_integration_templates
     │           ├── 06.ipam
     │           ├── 07.vpc
     │           ├── 08.rds
-    │           ├── 09.elasticache
+    │           ├── 09.valkey
     │           ├── 10.eks
     │           ├── 11.acm
     │           ├── 12.alb
@@ -166,7 +166,7 @@ logically-isolated virtual networks, leveraging both private and public subnets,
 
 providing backend database services for the sample web application
 
-### Elasticache
+### Valkey
 
 using ValKey for site indexing
 
