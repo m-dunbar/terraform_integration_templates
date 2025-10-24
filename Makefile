@@ -111,8 +111,8 @@ usage:
 	@echo ""
 	@echo "Post-bootstrap targets:"
 	@echo ""
-	@echo "  make ipam-apply      		Initialize and apply - provision IPAM map"
-	@echo "  make vpc-apply       		Initialize and apply - provision VPC and subnets"
+	@echo "  make ipam-apply      	   Initialize and apply - provision IPAM map"
+	@echo "  make vpc-apply       	   Initialize and apply - provision VPC and subnets"
 
 	@echo ""
 	@echo "NOTE: No actions are performed by default — use explicit recipe targets."

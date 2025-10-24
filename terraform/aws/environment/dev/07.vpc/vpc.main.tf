@@ -6,19 +6,42 @@ module "vpc_dev" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 6.5.0"
 
-  name                 = "dev-us-east-1"
-  cidr                 = "10.0.48.0/24"      # DEV VPC
-  azs                  = ["us-east-1a"]      # add AZ-b if needed
-  public_subnets       = ["10.0.48.0/26"]
-  private_subnets      = ["10.0.48.64/26"]
+  name                 = "${local.environment}-${local.region}"
+  cidr                 = data.aws_vpc_ipam_preview_next_cidr.dev_private_cidr.cidr
+  azs                  = local.azs
+  private_subnets      = [local.private_subnets[0]]
+  public_subnets       = [local.public_subnets[0]]
 
-  enable_nat_gateway   = false               # start without, add if required
+  private_subnet_names = [
+    for az in local.azs : "${local.environment}-${az}-private"
+  ]
+  public_subnet_names = [
+    for az in local.azs : "${local.environment}-${az}-public"
+  ]
+
+  igw_tags = {
+    Name = "${local.environment}-${local.region}-igw"
+  }
+
+  nat_gateway_tags = {
+    Name = "${local.environment}-${local.region}-nat-gw"
+  }
+
+  default_network_acl_name      = "${local.environment}-${local.region}-nacl"
+  default_route_table_name      = "${local.environment}-${local.region}-rtb"
+  default_security_group_name   = "${local.environment}-${local.region}-sg"
+
+  enable_nat_gateway   = false    # start without, add if required
   enable_dns_hostnames = true
   enable_dns_support   = true
 
   tags = {
     Environment = local.environment
-    Name        = "DEV-VPC"
+    ManagedBy   = "Terraform"
+  }
+
+  vpc_tags = {
+    Name = "${local.environment}-${local.region}-vpc"
   }
 }
 

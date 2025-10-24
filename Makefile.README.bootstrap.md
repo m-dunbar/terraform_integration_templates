@@ -49,6 +49,8 @@ Terraform plan targets (no changes made):
   make plan-kms            Plan KMS component
   make plan-dynamodb       Plan DynamoDB component
   make plan-s3             Plan S3 component
+  make plan-ipam           Plan IPAM component
+  make plan-vpc            Plan VPC component
 
 Terraform bootstrap targets:
 
@@ -62,12 +64,18 @@ Terraform bootstrap targets:
   make s3-bootstrap        Initialize and apply - create S3 bucket for tfstate
   make migrate-backends    Migrate all tfstate backends to S3
 
+Post-bootstrap targets:
+
+  make ipam-apply          Initialize and apply - provision IPAM map
+  make vpc-apply           Initialize and apply - provision VPC and subnets
+
 NOTE: No actions are performed by default — use explicit recipe targets.
 ```
 
 Sanity-checking for initial requirements is provided via the recipe `check-prereqs`.  An additional safety measure is offered via the recipe `account-info`
 
 Implementation is modular, allowing individual plan or apply for sets of resources.
+
 
 ---
 
