@@ -19,14 +19,6 @@ module "vpc_dev" {
     for az in local.azs : "${local.environment}-${az}-public"
   ]
 
-  igw_tags = {
-    Name = "${local.environment}-${local.region}-igw"
-  }
-
-  nat_gateway_tags = {
-    Name = "${local.environment}-${local.region}-nat-gw"
-  }
-
   default_network_acl_name      = "${local.environment}-${local.region}-nacl"
   default_route_table_name      = "${local.environment}-${local.region}-rtb"
   default_security_group_name   = "${local.environment}-${local.region}-sg"
@@ -34,6 +26,31 @@ module "vpc_dev" {
   enable_nat_gateway   = false    # start without, add if required
   enable_dns_hostnames = true
   enable_dns_support   = true
+
+
+  private_subnet_tags_per_az = {
+    for az in local.azs :
+    az => {
+      az   = az
+      type = "private"
+    }
+  }
+
+  public_subnet_tags_per_az = {
+    for az in local.azs :
+    az => {
+      az   = az
+      type = "public"
+    }
+  }
+
+  igw_tags = {
+    Name = "${local.environment}-${local.region}-igw"
+  }
+
+  nat_gateway_tags = {
+    Name = "${local.environment}-${local.region}-nat-gw"
+  }
 
   tags = {
     Environment = local.environment
