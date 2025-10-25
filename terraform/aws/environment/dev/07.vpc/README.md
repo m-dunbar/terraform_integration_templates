@@ -23,7 +23,7 @@ Subnets (AZ A):
  ```
 
 - Network ACL
-- Route Tables (default, public, private)
+- Route Tables (default, private, public)
 - Security Group
 - Internet Gateway
 
