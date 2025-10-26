@@ -36,9 +36,53 @@ module "maria_db" {
 
   db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
 
+  vpc_security_group_ids = [aws_security_group.mariadb_sg.id]
+
   tags = {
     Environment = "dev"
     Managed_by   = "Terraform"
+  }
+}
+
+data "aws_security_group" "default" {
+  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
+
+  filter {
+    name   = "group-name"
+    values = ["default"]
+  }
+}
+
+resource "aws_security_group" "mariadb_sg" {
+  name        = "mariadb-sg"
+  description = "Security group for MariaDB RDS"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+
+  ingress {
+    description      = "Allow access to MariaDB via SSH"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    security_groups  = [data.aws_security_group.default.id] # your app SG
+  }
+
+  ingress {
+    description      = "Allow access to MariaDB from app servers"
+    from_port        = 3306
+    to_port          = 3306
+    protocol         = "tcp"
+    security_groups  = [data.aws_security_group.default.id] # your app SG
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "mariadb-sg"
   }
 }
 
