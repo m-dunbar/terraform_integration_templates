@@ -9,8 +9,8 @@ module "vpc_dev" {
   name                 = "${local.environment}-${local.region}"
   cidr                 = data.aws_vpc_ipam_preview_next_cidr.dev_private_cidr.cidr
   azs                  = local.azs
-  private_subnets      = [local.private_subnets[0]]
-  public_subnets       = [local.public_subnets[0]]
+  private_subnets      = local.private_subnets
+  public_subnets       = local.public_subnets
 
   private_subnet_names = [
     for az in local.azs : "${local.environment}-${az}-private"

@@ -9,10 +9,10 @@ locals {
 
   # Derive subnets from IPAM preview CIDR
   # - partition the initial pool - /24 CIDR split into 4 /26 subnets
-  # - then assign first to private, second to public
-  partition       = cidrsubnets(data.aws_vpc_ipam_preview_next_cidr.dev_private_cidr.cidr, 2, 2)
-  private_subnets = [local.partition[0]]
-  public_subnets  = [local.partition[1]]
+  # - then assign first two to private, third to public
+  partition       = cidrsubnets(data.aws_vpc_ipam_preview_next_cidr.dev_private_cidr.cidr, 2, 2, 2, 2)
+  private_subnets = slice(local.partition, 0, 2)
+  public_subnets  = slice(local.partition, 2, 3)
 }
 
 # =============================================================================
