@@ -5,12 +5,6 @@
 locals {
   environment = "dev"
   region      = "us-east-1"
-
-  # lambda_dir      = "lambda/SecretsManagerRDSMySQLRotationSingleUser"
-  # lambda_bucket   = "rds-pswd-rotation-${local.region}"
-  # lambda_function = "lambda_function.py"
-  # lambda_zip      = "SecretsManagerRDSMySQLRotationSingleUser.zip"
-  # lambda_key      = "lambda/${local.lambda_zip}"
 }
 
 # =============================================================================
