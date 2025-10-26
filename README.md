@@ -102,6 +102,10 @@ For purposes of initial deployment, before minimum base requirements for a best-
 
 Initial baseline deployment, including reconfiguration and migration of all backend configs is implemented via the included `Makefile`, as documented in the top-level README.Makefile.md.
 
+#### A note about 'backend.tf.noop' specifically
+
+In order to perform the initial bootstrap, backend configurations must initially be set to noop, until the required minimum requirements are provisioned.  In order to ensure that working changes within the local copy of the repo do not interfere with effective experimentation and deployment, .gitignore include `*.backend.tf`.  For consistency and practicality, all backend.tf files include the `.noop` suffix, and are automatically copied to `.backend.tf` at the appropriate time when using the relevant `make` command.  No manual intervention is required.  Don't remove the .noop suffixes from these files yourself.  Let make manage them for you.
+
 ## Infrastructure as Code (IaC)
 
 WHEN COMPLETE, THIS SET OF TEMPLATES WILL PROVIDE:
