@@ -5,7 +5,7 @@
 locals {
   environment = "dev"
   region      = "us-east-1"
-  azs         = ["${local.region}a"]  # start with one region for dev, add more if needed
+  azs         = ["${local.region}a","${local.region}b"]  # start with one region for dev, add more if needed
 
   # Derive subnets from IPAM preview CIDR
   # - partition the initial pool - /24 CIDR split into 4 /26 subnets
