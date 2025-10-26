@@ -21,3 +21,7 @@ scratch/
 
 # Ignore post-migration backend files
 *.backend.tf
+
+# Ignore selected RDS configurations
+main.aurora.tf
+main.maria_db.tf
