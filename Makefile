@@ -35,6 +35,7 @@ DDB_DIR 	:= 04.dynamodb
 S3_DIR  	:= 05.s3
 IPAM_DIR  := 06.ipam
 VPC_DIR   := 07.vpc
+RDS_DIR   := 08.rds
 
 # --------------------------------------
 # Get the active AWS account ID
@@ -47,32 +48,52 @@ endif
 
 # Supporting Functions
 # -------------------------------------
+define activate # $(1): directory, $(2) tf file
+	@cd $(1) && \
+	if [ -e $(2).tf.noop ]; then \
+		cp $(2).tf.noop $(2).tf; \
+	fi
+endef
+
 define apply # $(1): directory
-	cd $(1) && \
+	@cd $(1) && \
 	if [ ! -d .terraform ]; then \
 		terraform init; \
 	fi && \
 	terraform apply -auto-approve
 endef
 
+define deactivate # $(1): directory, $(2) tf file
+	@cd $(1) && \
+	if [ -e $(2).tf ]; then \
+		mv $(2).tf $(2).tf.noop; \
+	fi
+endef
+
+define destroy # $(1): directory
+	@cd $(1) && \
+	terraform destroy
+endef
+
 define migrate # $(1): directory, $(2): backend filename prefix
-	cd $(1) && \
+	@cd $(1) && \
 	cp $(2).backend.tf.noop $(2).backend.tf && \
 	terraform init -migrate-state
 endef
 
 define plan # $(1): directory, $(2): plan options, $(3): backend filename prefix
-	cd $(1) && \
-	if [ ! -d .terraform ]; then \
-		terraform init; \
-	fi && \
+	@cd $(1) && \
 	if [ "$(strip $(3))" ]; then \
 		cp $(3).backend.tf.noop $(3).backend.tf; \
+	fi && \
+	if [ ! -d .terraform ]; then \
+		terraform init -upgrade; \
 	fi && \
 	terraform plan $(2)
 endef
 
-
+# Recipe Targets
+# ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Default target — always first, to prevent accidental apply.
 .PHONY: usage
@@ -113,7 +134,23 @@ usage:
 	@echo ""
 	@echo "  make ipam-apply      	   Initialize and apply - provision IPAM map"
 	@echo "  make vpc-apply       	   Initialize and apply - provision VPC and subnets"
-
+	@echo ""
+	@echo "Select RDS Configuration:"
+	@echo ""
+	@echo "  make aurora-active        Select Aurora RDS configuration"
+	@echo "  make aurora-inactive      Unselect Aurora RDS configuration"
+	@echo "  make mariadb-active       Select Maria DB configuration"
+	@echo "  make mariadb-inactive     Unselect Maria DB configuration"
+	@echo ""
+	@echo "Post-bootstrap targets:"
+	@echo ""
+	@echo "Post-bootstrap targets:"
+	@echo ""
+	@echo "  make rds-apply       	   Initialize and apply - provision RDS cluster"
+	@echo ""
+	@echo "Teardown:"
+	@echo ""
+	@echo "  make rds-destroy          De-provision and destroy RDS cluster"
 	@echo ""
 	@echo "NOTE: No actions are performed by default — use explicit recipe targets."
 
@@ -140,7 +177,7 @@ account-info:
 # ---------------------------------------------------------------------
 # Plan all components
 .PHONY: plan
-plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3 plan-ipam plan-vpc
+plan: account-info plan-auth0 plan-saml plan-iam plan-kms plan-dynamodb plan-s3 plan-ipam plan-vpc plan-rds
 	@echo
 	@echo "=== [Plan] Completed for all components ==="
 
@@ -201,6 +238,11 @@ plan-vpc:
 	$(call plan,$(DEV_DIR)/$(VPC_DIR),,vpc)
 
 # ---------------------------------------------------------------------
+# Plan VPC
+.PHONY: plan-rds
+plan-rds:
+	@echo -e "\nPlan RDS"
+	$(call plan,$(DEV_DIR)/$(RDS_DIR),,rds)
 
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
@@ -268,7 +310,7 @@ migrate-backends:
 # ---------------------------------------------------------------------
 # Post-bootstrap: IPAM setup
 .PHONY: post-bootstrap
-post-bootstrap: ipam-apply vpc-apply
+post-bootstrap: ipam-apply vpc-apply 
 	@echo "=== [Post-Bootstrap] for all components ==="
 
 # ---------------------------------------------------------------------
@@ -284,3 +326,57 @@ ipam-apply:
 vpc-apply:
 	@echo "=== [VPC] Defining VPC and subnets ==="
 	$(call apply,$(DEV_DIR)/$(VPC_DIR))
+
+# ---------------------------------------------------------------------
+# RDS config - aurora-active
+.PHONY: aurora-active
+aurora-active:
+	@echo "=== [RDS] Enabling Aurora Cluster Configuration ==="
+	$(call activate,$(DEV_DIR)/$(RDS_DIR),main.aurora)
+
+# ---------------------------------------------------------------------
+# RDS setup
+.PHONY: aurora-inactive
+aurora-inactive:
+	@echo "=== [RDS] Disabling Aurora Cluster Configuration ==="
+	$(call deactivate,$(DEV_DIR)/$(RDS_DIR),main.aurora)
+
+# ---------------------------------------------------------------------
+# RDS setup
+.PHONY: mariadb-active
+mariadb-active:
+	@echo "=== [RDS] Enabling Maria DB Configuration ==="
+	$(call activate,$(DEV_DIR)/$(RDS_DIR),main.maria_db)
+
+# ---------------------------------------------------------------------
+# RDS setup
+.PHONY: mariadb-inactive
+mariadb-inactive:
+	@echo "=== [RDS] Disabling Maria DB Configuration ==="
+	$(call deactivate,$(DEV_DIR)/$(RDS_DIR),main.maria_db)
+
+# ---------------------------------------------------------------------
+# RDS setup
+.PHONY: rds-apply
+rds-apply:
+	@echo "=== [RDS] Creating RDS cluster ==="
+	$(call apply,$(DEV_DIR)/$(RDS_DIR))
+
+# ---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Primary orchestrator
+.PHONY: cleanup
+cleanup: account-info rds-destroy
+	@echo "=== [Cleanup] Completed for all components ==="
+
+# ---------------------------------------------------------------------
+# RDS destroy with confirmation
+.PHONY: rds-destroy
+rds-destroy:
+	@echo "=== [RDS] WARNING: This will destroy the RDS cluster in $(DEV_DIR)/$(RDS_DIR) ==="
+	@read -p "Are you sure you want to continue? Type 'yes' to confirm: " CONFIRM && \
+	if [ "$$CONFIRM" = "yes" ]; then \
+		$(call destroy,$(DEV_DIR)/$(RDS_DIR)); \
+	else \
+		echo "Terraform preserved.  Wise choice, young padawan."; \
+	fi

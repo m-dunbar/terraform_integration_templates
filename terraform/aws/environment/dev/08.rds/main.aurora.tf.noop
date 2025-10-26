@@ -1,0 +1,63 @@
+# =============================================================================
+# terraform_integration_templates :: terraform/aws/environment/dev/08.rds/main.tf
+#       :: mdunbar :: 2025 Oct 24 :: MIT License © 2025 Matthew Dunbar ::
+# =============================================================================
+module "rds_aurora" {
+  source  = "terraform-aws-modules/rds-aurora/aws"
+  version = "~> 9.16.0"
+
+  name           = "aurora-demo"
+  engine         = "aurora-mysql"
+  engine_version = "8.0.mysql_aurora.3.10.1"
+
+  auto_minor_version_upgrade = true
+  apply_immediately          = false   # set to true to apply outside of maintenance window
+  skip_final_snapshot        = true    # ** default maintenance window: Sun 0100-0100 UTC (-4) **
+
+  master_username             = "admin"
+  manage_master_user_password = true
+
+  instance_class = "db.t4g.medium"
+  instances = {
+    writer = {
+      instance_class = "db.t4g.medium"
+    }
+    reader1 = {
+      instance_class = "db.t4g.medium"
+    }
+    reader2 = {
+      instance_class = "db.t4g.medium"
+    }
+  }
+
+  vpc_id               = data.terraform_remote_state.vpc.outputs.vpc_id
+  db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
+
+  tags = {
+    Environment = "dev"
+    Managed_by   = "Terraform"
+  }
+}
+
+resource "aws_db_subnet_group" "rds_subnet_group" {
+  name       = "rds-subnet-group"
+  subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
+  tags = {
+    Name = "RDS Subnet Group"
+  }
+}
+
+resource "aws_secretsmanager_secret_rotation" "rds_password_rotation" {
+  secret_id           = module.rds_aurora.cluster_master_user_secret[0].secret_arn
+  # rotation_lambda_arn = aws_lambda_function.rds_rotation_lambda.arn
+
+  rotation_rules {
+    automatically_after_days = 7
+  }
+}
+
+output "rds_secret_arn" {
+  value = module.rds_aurora.cluster_master_user_secret[0].secret_arn
+}
+
+# =============================================================================

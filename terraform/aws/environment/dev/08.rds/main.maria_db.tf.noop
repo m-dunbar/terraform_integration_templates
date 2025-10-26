@@ -1,0 +1,61 @@
+# =============================================================================
+# terraform_integration_templates :: terraform/aws/environment/dev/08.rds/main.maria_db.tf
+#       :: mdunbar :: 2025 Oct 26 :: MIT License © 2025 Matthew Dunbar ::
+# =============================================================================
+module "maria_db" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "~> 6.13.0"
+
+  identifier           = "maria-db-demo"
+  engine               = "mariadb"
+  engine_version       = "11.8"
+  family               = "mariadb11.8"
+
+  create_db_option_group = false
+
+  instance_class        = "db.t3.micro"
+  storage_type          = "gp3"
+  allocated_storage     = 20
+  max_allocated_storage = 50
+
+  # storage_encrypted = true
+  # kms_key_id        = 
+
+  db_name = "wordpress"
+
+  multi_az              = false     # false is fine for dev, but should be true for prod
+  publicly_accessible   = false
+
+  auto_minor_version_upgrade = true
+  apply_immediately          = false   # set to true to apply outside of maintenance window
+  skip_final_snapshot        = true    # ** default maintenance window: Sun 0100-0100 UTC (-4) **
+
+  username                    = "admin"
+  manage_master_user_password = true
+  master_user_password_rotation_automatically_after_days = 7
+
+  db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
+
+  tags = {
+    Environment = "dev"
+    Managed_by   = "Terraform"
+  }
+}
+
+resource "aws_db_subnet_group" "maria_db_subnet_group" {
+  name       = "maria-db-subnet-group"
+  subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
+  tags = {
+    Name = "RDS Subnet Group"
+  }
+}
+
+output "maria_db_secret_arn" {
+  value = module.maria_db.db_instance_master_user_secret_arn
+}
+
+output "maria_db_instance_endpoint" {
+  value = module.maria_db.db_instance_endpoint
+}
+
+# =============================================================================
