@@ -4,6 +4,12 @@
 # =============================================================================
 locals {
   kms_key_arn = try(data.aws_kms_key.terraform[0].arn, "KMS key not found")
+
+  terraform_kms_key_arn = (
+    var.bootstrap_plan
+    ? "bootstrap planning: kms key not yet created"
+    : try(data.aws_kms_key.terraform[0].arn, "kms key with alias/terraform not found")
+  )
 }
 
 # =============================================================================
