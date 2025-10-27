@@ -9,13 +9,13 @@ variable "auth0_domain" {
 }
 
 # Auth0 Management API client ID (for Terraform provider)
-variable "auth0_client_id" {
+variable "auth0_saml_client_id" {
   description = "Auth0 Management API client ID"
   type        = string
 }
 
 # Auth0 Management API client secret (for Terraform provider)
-variable "auth0_client_secret" {
+variable "auth0_saml_client_secret" {
   description = "Auth0 Management API client secret"
   type        = string
   sensitive   = true

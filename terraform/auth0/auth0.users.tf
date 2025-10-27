@@ -15,8 +15,8 @@ module "auth0_user" {
 #   source = "../modules/auth0/password_reset"
 #   auth0_users = var.auth0_users
 #   auth0_credentials = {
-#       client_id     = var.auth0_client_id
-#       client_secret = var.auth0_client_secret
+#       client_id     = var.auth0_saml_client_id
+#       client_secret = var.auth0_saml_client_secret
 #       domain        = var.auth0_domain
 #     }
 # }

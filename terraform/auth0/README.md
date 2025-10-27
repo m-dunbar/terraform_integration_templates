@@ -52,9 +52,9 @@ Example _auth0.credentials.auto.tfvars_:
 # terraform_integration_templates :: auth0/auth0.credentials.auto.tfvars 
 #      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
-auth0_domain        = "<your-auth0-domain>.us.auth0.com"
-auth0_client_id     = "<your-application-specific-client_id>"
-auth0_client_secret = "<your-application-specific-client_secret>"
+auth0_domain             = "<your-auth0-domain>.us.auth0.com"
+auth0_saml_client_id     = "<your-application-specific-client_id>"
+auth0_saml_client_secret = "<your-application-specific-client_secret>"
 
 # =============================================================================
 ```
