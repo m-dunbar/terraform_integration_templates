@@ -1,5 +1,5 @@
 # =============================================================================
-# terraform-integration-template :: environment/dev/04.dynamodb/kms.backend.tf 
+# terraform-integration-template :: environment/dev/04.dynamodb/dynamodb.backend.tf 
 #      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 terraform {
