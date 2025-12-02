@@ -7,6 +7,7 @@
 data "aws_iam_policy_document" "assume_role_auth0" {
   statement {
     sid     = "AssumeRoleViaAuth0"
+    effect  = "Allow"
     actions = ["sts:AssumeRoleWithSAML"]
 
     principals {
