@@ -60,4 +60,8 @@ output "rds_secret_arn" {
   value = module.rds_aurora.cluster_master_user_secret[0].secret_arn
 }
 
+output "rds_aurora_endpoint" {
+  value = module.rds_aurora.cluster_endpoint
+}
+
 # =============================================================================

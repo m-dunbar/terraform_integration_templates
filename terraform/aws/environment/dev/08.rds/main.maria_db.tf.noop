@@ -34,7 +34,7 @@ module "maria_db" {
   manage_master_user_password = true
   master_user_password_rotation_automatically_after_days = 7
 
-  db_subnet_group_name = aws_db_subnet_group.rds_subnet_group.name
+  db_subnet_group_name = aws_db_subnet_group.maria_db_subnet_group.name
 
   vpc_security_group_ids = [aws_security_group.mariadb_sg.id]
 

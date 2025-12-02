@@ -1,0 +1,53 @@
+# =============================================================================
+# var.global :: content-rds :: mdunbar :: 2024 oct 10
+# =============================================================================
+# This file contains global variables that are shared across all support scripts
+# =============================================================================
+# account variables
+# --------------------
+account_name_dev="tf-integration-templates-dev"
+account_name_stage=""
+account_name_prod=""
+
+# used for constructing ARNs
+account_number_dev=$(aws sts get-caller-identity --profile ${account_name_dev} --query "Account" --output text)
+account_number_stage=""
+account_number_prod=""
+
+# --------------------
+# session variables
+# --------------------
+# shellcheck disable=SC2034 # ignore unused variable (bastion_connection_duration is passed to auth.sh)
+bastion_connection_duration="60"          # minutes -- awsfed credential will expire after an hour, so a higher value is not useful
+
+# --------------------
+# cluster variables
+# --------------------
+target_cluster="${1-NOT-SPECIFIED}"       # where it all starts!
+
+# --------------------
+# AWS CLI variables
+# --------------------
+# as a convention, I've capitalized vars used specifically for the AWS CLI throughout the scripts
+AWS_REGION=${AWS_REGION:-'us-east-1'}
+AWS_ROLE=${AWS_ROLE:-'fed.power.user'}
+
+# =====================================
+# Global Functions
+# --------------------
+function usage() {
+  echo "Please specify an environment parameter from one of the following:"
+  echo "${green}Usage:${normal} ${yellow}${0}${normal} ${blue}<target_cluster>${normal}"
+  echo
+  echo "where ${blue}<target cluster>${normal} is one of:"
+  echo
+  echo " RDS:"
+  echo "   tf-integration-templates-dev-aurora|tf-integration-templates-dev-mariadb"
+}
+
+function usage_redis() {
+  usage
+  echo
+  echo " Redis:"
+  exit 3
+}
