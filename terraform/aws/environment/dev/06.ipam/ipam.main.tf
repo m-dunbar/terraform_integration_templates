@@ -21,6 +21,10 @@ resource "aws_vpc_ipam_pool" "top_level" {
   
   ipam_scope_id  = aws_vpc_ipam.main.private_default_scope_id
   address_family = "ipv4"
+
+  tags = {
+    Name = "top_level"
+  }
 }
 
 resource "aws_vpc_ipam_pool_cidr" "top_level_cidr" {
