@@ -70,7 +70,7 @@ resource "aws_secretsmanager_secret" "valkey_auth" {
   recovery_window_in_days = 7
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 
   tags = {
