@@ -1,0 +1,14 @@
+# =============================================================================
+# terraform_integration_templates :: terraform/aws/environment/dev/10.eks/eks.backend.tf
+#       :: mdunbar :: 2025 Dec 01 :: MIT License © 2025 Matthew Dunbar ::
+# =============================================================================
+terraform {
+  backend "s3" {
+    bucket         = "tf-integration-template-terraform-state-us-east-1"
+    dynamodb_table = "terraform_locks"
+    key            = "eks/terraform.tfstate"
+    region         = "us-east-1"
+  }
+}
+
+# =============================================================================

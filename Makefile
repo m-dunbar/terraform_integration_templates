@@ -37,6 +37,7 @@ IPAM_DIR  		  := 06.ipam
 VPC_DIR     	  := 07.vpc
 RDS_DIR   		  := 08.rds
 ELASTICACHE_DIR := 09.elasticache
+EKS_DIR         := 10.eks
 
 # --------------------------------------
 # Get the active AWS account ID
@@ -92,6 +93,7 @@ define plan # $(1): directory, $(2): plan options, $(3): backend filename prefix
 	fi && \
 	terraform plan $(2)
 endef
+# TODO: add logic to 'plan' to support updates in the event init has already been run previously
 
 # Recipe Targets
 # ---------------------------------------------------------------------
@@ -120,6 +122,7 @@ usage:
 	@echo "  make plan-vpc             Plan VPC component"
 	@echo "  make plan-rds             Plan RDS component"
 	@echo "  make plan-elasticache     Plan ElastiCache component"
+	@echo "  make plan-eks             Plan EKS component"
 	@echo ""
 	@echo "Terraform bootstrap targets:"
 	@echo ""
@@ -151,11 +154,13 @@ usage:
 	@echo ""
 	@echo "  make rds-apply       	    Initialize and apply - provision RDS cluster"
 	@echo "  make elasticache-apply    Initialize and apply - provision ElastiCache cluster"
+	@echo "  make eks-apply       	   Initialize and apply - provision EKS cluster"
 	@echo ""
 	@echo "Teardown:"
 	@echo ""
 	@echo "  make rds-destroy          De-provision and destroy RDS cluster"
 	@echo "  make elasticache-destroy  De-provision and destroy ElastiCache cluster"
+	@echo "  make eks-destroy          De-provision and destroy EKS cluster"
 	@echo ""
 	@echo "  make cleanup              De-provision and destroy all terraform-managed resources"
 	@echo ""
@@ -184,7 +189,7 @@ account-info:
 # ---------------------------------------------------------------------
 # Plan all components
 .PHONY: plan
-plan: account-info plan-auth0 plan-providers plan-iam plan-kms plan-dynamodb plan-s3 plan-ipam plan-vpc plan-rds
+plan: account-info plan-auth0 plan-providers plan-iam plan-kms plan-dynamodb plan-s3 plan-ipam plan-vpc plan-rds plan-elasticache plan-eks
 	@echo
 	@echo "=== [Plan] Completed for all components ==="
 
@@ -256,12 +261,18 @@ plan-rds:
 	@$(call plan,$(DEV_DIR)/$(RDS_DIR),,rds)
 
 # ---------------------------------------------------------------------
-# Plan RDS
+# Plan Elasticache
 .PHONY: plan-elasticache
 plan-elasticache:
 	@echo -e "\nPlan ElastiCache"
 	@$(call plan,$(DEV_DIR)/$(ELASTICACHE_DIR),,elasticache)
 
+# ---------------------------------------------------------------------
+# Plan EKS
+.PHONY: plan-eks
+plan-eks:
+	@echo -e "\nPlan EKS"
+	@$(call plan,$(DEV_DIR)/$(EKS_DIR),,eks)
 
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
@@ -347,28 +358,28 @@ vpc-apply:
 	@$(call apply,$(DEV_DIR)/$(VPC_DIR))
 
 # ---------------------------------------------------------------------
-# RDS config - aurora-active
+# RDS config - aurora active
 .PHONY: aurora-active
 aurora-active:
 	@echo "=== [RDS] Enabling Aurora Cluster Configuration ==="
 	@$(call activate,$(DEV_DIR)/$(RDS_DIR),main.aurora)
 
 # ---------------------------------------------------------------------
-# RDS setup
+# RDS setup - aurora inactive
 .PHONY: aurora-inactive
 aurora-inactive:
 	@echo "=== [RDS] Disabling Aurora Cluster Configuration ==="
 	@$(call deactivate,$(DEV_DIR)/$(RDS_DIR),main.aurora)
 
 # ---------------------------------------------------------------------
-# RDS setup
+# RDS setup - mariadb active
 .PHONY: mariadb-active
 mariadb-active:
 	@echo "=== [RDS] Enabling Maria DB Configuration ==="
 	@$(call activate,$(DEV_DIR)/$(RDS_DIR),main.maria_db)
 
 # ---------------------------------------------------------------------
-# RDS setup
+# RDS setup - mariadb inactive
 .PHONY: mariadb-inactive
 mariadb-inactive:
 	@echo "=== [RDS] Disabling Maria DB Configuration ==="
@@ -389,10 +400,17 @@ elasticache-apply:
 	@$(call apply,$(DEV_DIR)/$(ELASTICACHE_DIR))
 
 # ---------------------------------------------------------------------
+# EKS setup
+.PHONY: eks-apply
+eks-apply:
+	@echo "=== [EKS] Creating EKS cluster ==="
+	@$(call apply,$(DEV_DIR)/$(EKS_DIR))
+
+# ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Primary orchestrator
 .PHONY: cleanup
-cleanup: account-info rds-destroy elasticache-destroy
+cleanup: account-info rds-destroy elasticache-destroy eks-destroy
 	@echo "=== [Cleanup] Completed for all components ==="
 
 # ---------------------------------------------------------------------
@@ -401,7 +419,7 @@ cleanup: account-info rds-destroy elasticache-destroy
 rds-destroy:
 	@echo "=== [RDS] WARNING: This will destroy the RDS cluster in $(DEV_DIR)/$(RDS_DIR) ==="
 	@read -p "Are you sure you want to continue? Type 'yes' to confirm: " CONFIRM && \
-	@if [ "$$CONFIRM" = "yes" ]; then \
+	if [ "$$CONFIRM" = "yes" ]; then \
 		$(call destroy,$(DEV_DIR)/$(RDS_DIR)); \
 	else \
 		echo "RDS cluster preserved."; \
@@ -413,8 +431,20 @@ rds-destroy:
 elasticache-destroy:
 	@echo "=== [Elasticache] WARNING: This will destroy the ElastiCache cluster in $(DEV_DIR)/$(ELASTICACHE_DIR) ==="
 	@read -p "Are you sure you want to continue? Type 'yes' to confirm: " CONFIRM && \
-	@if [ "$$CONFIRM" = "yes" ]; then \
+	if [ "$$CONFIRM" = "yes" ]; then \
 		$(call destroy,$(DEV_DIR)/$(ELASTICACHE_DIR)); \
 	else \
 		echo "Valkey cluster preserved."; \
+	fi
+
+# ---------------------------------------------------------------------
+# EKS destroy with confirmation
+.PHONY: eks-destroy
+eks-destroy:
+	@echo "=== [EKS] WARNING: This will destroy the EKS cluster in $(DEV_DIR)/$(EKS_DIR) ==="
+	@read -p "Are you sure you want to continue? Type 'yes' to confirm: " CONFIRM && \
+	if [ "$$CONFIRM" = "yes" ]; then \
+		$(call destroy,$(DEV_DIR)/$(EKS_DIR)); \
+	else \
+		echo "EKS cluster preserved."; \
 	fi
