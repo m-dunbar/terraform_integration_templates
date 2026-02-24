@@ -1,4 +1,4 @@
-# Elastic Kubernetes Service (EKS)
+# Elastic Kubernetes Service (EKS) -- _**in progress**_
 
 Amazon EKS is Amazon's managed, certified Kubernetes (K8S) service offering, running standard K8S clusters while managing the K8S control plane.
 
@@ -7,6 +7,23 @@ This terraform deploys a standard (albeit extremely small) EKS managed node grou
 Normal cluster management tools (`kubectl`, `helm`) can then be used to manage the cluster normally.
 
 Deployments can then proceed using `kubectl deploy`
+
+## EKS Cluster - hashicorp EKS module -- in progress
+
+## Application Stack -- TODO
+
+### implementation - k8s deployment
+
+### supporting plugins - helm
+
+## Observability -- _TODO_
+
+### Prometheus
+
+### Grafana
+
+### Thanos/S3
+
 
 ## Cost Comparison
 
@@ -35,5 +52,5 @@ Auto-mode provides an on-ramp for teams with little capacity planning expertise 
 
 ---
 
-© 2025 Matthew Dunbar  
+© 2026 Matthew Dunbar  
 (See LICENSE for details.)

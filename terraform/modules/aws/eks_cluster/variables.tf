@@ -13,10 +13,14 @@ variable "cluster_label" {
   }
 }
 
-# variable "cluster_iam_role_arn" {
-#   description = "IAM Role ARN for the EKS control plane"
-#   type        = string
-# }
+variable "eks_managed_node_groups" {
+  type = map(object({
+    desired_size   = number
+    min_size       = number
+    max_size       = number
+    instance_types = list(string)
+  }))
+}
 
 variable "environment" {
   type        = string
@@ -29,20 +33,10 @@ variable "environment" {
   }
 }
 
-# variable "node_iam_role_arn" {
-#   description = "IAM Role ARN for EC2 worker nodes"
-#   type        = string
-# }
-
-variable "node_groups" {
-  description = "Map of managed node group definitions (desired, min, max, instance_types)"
-  type = map(object({
-    desired_size    = number
-    min_size        = number
-    max_size        = number
-    instance_types  = list(string)
-  }))
-  default = {}
+variable "instance_type" {
+  description = "EC2 instance type for EKS worker nodes"
+  type        = string
+  default     = "t3.medium"
 }
 
 variable "subnet_ids" {

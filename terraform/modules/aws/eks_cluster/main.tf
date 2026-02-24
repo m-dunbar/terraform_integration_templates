@@ -18,18 +18,11 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.subnet_ids
 
-  node_iam_role_name = aws_iam_role.eks_node_role.name
+  # node_iam_role_name = aws_iam_role.eks_node_role.name
 
-  tags = var.tags
+  cluster_tags = var.tags
 
-  eks_managed_node_groups = {
-    default = {
-      desired_capacity = 2
-      min_capacity     = 1
-      max_capacity     = 3
-      instance_types   = ["t3.micro"] # micro for demo purposes only - increase for production workloads
-    }
-  }
+  eks_managed_node_groups = var.eks_managed_node_groups
 }
 
 # =============================================================================

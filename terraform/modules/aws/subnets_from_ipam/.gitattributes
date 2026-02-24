@@ -1,3 +1,0 @@
-# .gitattributes :: used by GitHub Linguist to detect file types
-# map .tpl to JavaScript (specifically, JS is used here to configure Auth0 actions, where we're passing HCL variables to JS code)
-*.tpl linguist-language=JavaScript

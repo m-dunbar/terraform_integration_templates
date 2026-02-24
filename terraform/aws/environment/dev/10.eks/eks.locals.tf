@@ -5,7 +5,16 @@
 locals {
   environment = "dev"
   cluster_label = "demo"
-  source_ipam_pool_name = "top_level"
+  source_ipam_pool_name = "dev_private_cidr"
+
+  eks_managed_node_groups = {
+    demo = {
+      desired_size   = 2
+      min_size       = 1
+      max_size       = 3
+      instance_types = ["t3.medium"] # micro for demo purposes only - increase for production workloads
+    }
+  }
 
   tags = {
     Environment = local.environment

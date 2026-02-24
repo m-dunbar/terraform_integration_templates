@@ -11,6 +11,18 @@ data "aws_vpc" "dev_vpc" {
   }
 }
 
+data "aws_subnets" "dev_vpc_private_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.dev_vpc.id]
+  }
+
+  # optional tag filter e.g., by your type = "private"
+  tags = {
+    type = "private"
+  }
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
