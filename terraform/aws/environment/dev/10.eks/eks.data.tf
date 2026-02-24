@@ -31,11 +31,11 @@ locals {
   azs = data.aws_availability_zones.available.names
 }
 
-data "aws_vpc_ipam_pool" "source_pool" {
-  filter {
-    name   = "tag:Name"
-    values = [local.source_ipam_pool_name]
-  }
-}
+# data "aws_vpc_ipam_pool" "source_pool" {
+#   filter {
+#     name   = "tag:Name"
+#     values = [local.source_ipam_pool_name]
+#   }
+# }
 
 # =============================================================================

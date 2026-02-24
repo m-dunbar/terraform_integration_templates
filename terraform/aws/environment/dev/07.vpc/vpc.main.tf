@@ -23,7 +23,11 @@ module "vpc_dev" {
   default_route_table_name      = "${local.environment}-${local.region}-rtb"
   default_security_group_name   = "${local.environment}-${local.region}-sg"
 
-  enable_nat_gateway   = false    # start without, add if required
+  enable_nat_gateway     = true   # required for EKS nodes to pull container images 
+                                  # -- and updates, and for cluster management if endpoint_public_access is false
+  single_nat_gateway     = true   # cheaper, fine for dev
+  one_nat_gateway_per_az = false  # default anyway
+
   enable_dns_hostnames = true
   enable_dns_support   = true
 

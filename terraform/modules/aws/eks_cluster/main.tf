@@ -23,6 +23,17 @@ module "eks" {
   cluster_tags = var.tags
 
   eks_managed_node_groups = var.eks_managed_node_groups
+
+  addons = {
+    coredns                = {}
+    eks-pod-identity-agent = {
+      before_compute = true
+    }
+    kube-proxy             = {}
+    vpc-cni                = {
+      before_compute = true
+    }
+  }
 }
 
 # =============================================================================

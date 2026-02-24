@@ -9,10 +9,11 @@ locals {
 
   eks_managed_node_groups = {
     demo = {
+      name           = "${local.environment}-${local.cluster_label}"
       desired_size   = 2
       min_size       = 1
       max_size       = 3
-      instance_types = ["t3.medium"] # micro for demo purposes only - increase for production workloads
+      instance_types = ["t3.large"] # medium appears to be the smallest viable node size - increase as needed
     }
   }
 
