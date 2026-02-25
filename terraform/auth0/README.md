@@ -1,4 +1,4 @@
-# Auth0 configured as SAML Identity Provider
+# Auth0 configured as SAML Identity Provider -- partially implemented
 
 [Auth0](https://auth0.com) is a SOC2-compliant, identity-as-a-service (IDaaS) platform that provides authentication and authorization services for applications. It allows developers to securely manage user identities without building a custom identity solution from scratch.
 
@@ -53,8 +53,9 @@ Example _auth0.credentials.auto.tfvars_:
 #      :: mdunbar :: 2025 oct 05 :: MIT License © 2025 Matthew Dunbar ::
 # =============================================================================
 auth0_domain             = "<your-auth0-domain>.us.auth0.com"
-auth0_saml_client_id     = "<your-application-specific-client_id>"
-auth0_saml_client_secret = "<your-application-specific-client_secret>"
+
+auth0_client_id     = "<your-tf-application-specific-client_id>"
+auth0_client_secret = "<your-tf-application-specific-client_secret>"
 
 # =============================================================================
 ```
@@ -113,6 +114,8 @@ Auth0 provides centralized user management, allowing implementation and manageme
 
 ## TODO
 
+- complete OIDC configuration
+- fully integrate within AWS IAM (SAML and OIDC) for fully federated access examples
 - add migration of auth0 tfstate to an S3 backend
 - complete automation of sending 'password reset' email for new users (currently, that would be done via the Auth0 console UI)
 
