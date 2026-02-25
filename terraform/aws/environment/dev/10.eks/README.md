@@ -34,9 +34,15 @@ Installed and configured via modules/aws/eks_cluster/helm.prometheus.tf
 
 Installed and configured via modules/aws/eks_cluster/helm.grafana.tf
 
+_[add example access link to grafana web interface -- add a script to plumb it for direct cluster access (more secure) via a local URL querym or additional infrastructure to reach it via load balancer (an option used to expose dashboards to a larger audience)]_
+
 ### Thanos/S3 -- _TODO_
 
 Thanos provides long term metrics storage in S3, allowing metrics analysis against long term historical performance.
+
+### Karpenter -- _TODO_
+
+_(A reach objective integration example - scaling sufficiently to demonstrate may be somewhat more expensive.)_
 
 ## Cost Comparisons of different EKS deployment models
 
@@ -44,24 +50,29 @@ _(Very basic overview.  Expand later.)_
 
 ### EKS Managed Node Group -- the model implemented here
 
-Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
-EC2 Compute costs -- lowest cost model for persistent, predictable loads (and can use spot or reserved instances to further lower costs)
+- Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
+- EC2 Compute costs
+
+The lowest cost model for persistent, predictable loads (and can use spot or reserved instances to further lower costs).  
+
+Ideally, implementing Karpenter to provide horizontal node-level autoscaling to further reduce overhead, using relevant metrics for determining upscaling and downscaling, in addition to node rightsizing (vertical scaling) provides optimal cost management.
 
 ### Fargate
 
-Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
+- Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
+- per-vCPU and per-GB memory costs consumed (generally 2-4x those costs in EC2)
 
-per-vCPU and per-GB memory costs consumed  (generally 2-4x those costs in EC2 -- but, no idle-time overhead costs, so may be cost effective for short, burstable, low volume pods)
+Often considerably more expensive for persistant, predicatable loads, but the Fargate model eliminates idle-time overhead costs, so may be cost effective for short, burstable, low volume pods.
 
 ### Auto-mode
 
-Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
-EC2 compute costs
-Auto Mode management fee (10-15% additional overhead)
+- Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
+- EC2 compute costs
+- Auto Mode management fee (10-15% additional overhead)
 
 Auto-scales nodes according to pod-based demand (basically, similar to AWS-managed Karpenter).
 
-Auto-mode provides an on-ramp for teams with little capacity planning expertise expertise.  (_Can_ be lower cost than over-provisioned Managed Node Groups, based upon cluster node autoscaling.)
+Auto-mode provides an on-ramp for teams with little capacity planning expertise expertise.  It _can_ be lower cost than over-provisioned Managed Node Groups, based upon potential savings via cluster node autoscaling.
 
 ---
 
