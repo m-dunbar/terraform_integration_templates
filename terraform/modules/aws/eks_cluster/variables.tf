@@ -44,6 +44,11 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags applied to EKS cluster and node groups"
   type        = map(string)

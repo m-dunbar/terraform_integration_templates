@@ -4,32 +4,45 @@ Amazon EKS is Amazon's managed, certified Kubernetes (K8S) service offering, run
 
 This terraform deploys a standard (albeit extremely small) EKS managed node group (creating supporting control nodes within EC2).  This provides full cluster control, with a lower cost point than Fargate or 'Auto mode' deployment models for persistent clusters.
 
-Normal cluster management tools (`kubectl`, `helm`) can then be used to manage the cluster normally.
+Standard cluster management tools (`kubectl`, `helm`) can then be used to manage the cluster normally.
 
-Deployments can then proceed using `kubectl deploy`
+Deployments can proceed using `kubectl deploy`, `terraform apply`, or CI/CD pipeline.
 
-## EKS Cluster - hashicorp EKS module -- in progress
+## EKS Cluster
+
+Cluster creation is performed by calling a local module 'aws/eks_cluster', which includes standardized configuration elements (example: a monitoring namespace), and adding and configuring supporting observability components (prometheus, grafana).
 
 ## Application Stack -- TODO
 
 ### implementation - k8s deployment
 
-### supporting plugins - helm
+## Supporting plugins (via helm)
 
-## Observability -- _TODO_
+**External Secrets Operator (ESO)** [chart: external-secrets] -- populates Kubernetes Secrets from AWS Secrets Manager
+
+## Observability -- _in progress_
+
+_Currently working through the `terraform plan` 'chicken and egg' of having to have the Custom Resource Definitions already installed in order for `plan` to evaluate the supporting helm manifests that will configure ESO and grafana._
+
+_This can be brute forced with multiple  plan/apply passes, but a cleaner solution is desired._
 
 ### Prometheus
 
+Installed and configured via modules/aws/eks_cluster/helm.prometheus.tf
+
 ### Grafana
 
-### Thanos/S3
+Installed and configured via modules/aws/eks_cluster/helm.grafana.tf
 
+### Thanos/S3 -- _TODO_
 
-## Cost Comparison
+Thanos provides long term metrics storage in S3, allowing metrics analysis against long term historical performance.
+
+## Cost Comparisons of different EKS deployment models
 
 _(Very basic overview.  Expand later.)_
 
-### EKS Managed Node Group
+### EKS Managed Node Group -- the model implemented here
 
 Monthly control plane cost per cluster ($0.10/hour. ~$73/month)
 EC2 Compute costs -- lowest cost model for persistent, predictable loads (and can use spot or reserved instances to further lower costs)

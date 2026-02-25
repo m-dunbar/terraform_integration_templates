@@ -18,6 +18,7 @@ scratch/
 # Omit sensitive variable files
 *.credentials.auto.tfvars
 *.users.auto.tfvars
+secrets.auto.tfvars
 
 # Ignore post-migration backend files
 *.backend.tf
